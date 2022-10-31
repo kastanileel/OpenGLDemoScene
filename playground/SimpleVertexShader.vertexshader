@@ -3,10 +3,25 @@
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPosition_modelspace;
 
-void main(){
+// Input color data
+layout(location = 1) in vec3 colorIn;
 
-    gl_Position.xyz = vertexPosition_modelspace;
-    gl_Position.w = 1.0;
+//Input Translationmatrix
+uniform mat4 Translation;
+
+//output color data
+out vec3 colorVertex;
+
+void main(){
+    vec4 pshader;
+    pshader.x = vertexPosition_modelspace.x;
+    pshader.y = vertexPosition_modelspace.y;
+    pshader.z = vertexPosition_modelspace.z;
+    pshader.w = 1;
+
+    gl_Position = pshader * Translation;
+    
+    colorVertex = colorIn;
 
 }
 

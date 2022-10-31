@@ -1,12 +1,15 @@
 #version 330 core
 
+//get current color
+in vec3 colorVertex;
+
 // Ouput data
-out vec3 color;
+out vec3 colorOut;
 
 void main()
 {
-
-	// Output color = red 
-	color = vec3(1,0,0);
+	
+	// Take color from Vertex Shader
+	colorOut = colorVertex;
 
 }

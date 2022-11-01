@@ -11,12 +11,15 @@ GLFWwindow* window;
 // Include GLM
 #include <glm/glm.hpp>
 using namespace glm;
-
 #include <common/shader.hpp>
+#include <vector>
+
+
+
 glm::mat2 myRotation;
 glm::mat3 myTranslation;
 glm::mat2 myScale;
-glm::mat4 shaderTranslation;
+glm::mat4 mvp_matrix;
 glm::mat3 curTranslation;
 float x, y;
 
@@ -46,8 +49,15 @@ int main( void )
   bool vertexbufferInitialized = initializeVertexbuffer();
   if (!vertexbufferInitialized) return -1;
 
+  bool colorbufferInitialized = initializeColorbuffer();
+  if (!colorbufferInitialized) return -1;
+
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+
+    
+  
+
 
 	//start animation loop until escape key is pressed
 	do{
@@ -74,48 +84,54 @@ void updateAnimationLoop()
 
     //Analyze User Inputs
     if (glfwGetKey(window, GLFW_KEY_W)) {
-        y += 0.001f;
+        y += 0.003f ;
         curTranslation = glm::mat3( 1,  0,  x,
                                     0,  1,  y,
                                     0,  0,  1);
     }
 
     if (glfwGetKey(window, GLFW_KEY_S)) {
-        y -= 0.001f;
+        y -= 0.003f;
        curTranslation = glm::mat3(-1, 0, x,
                                     0, -1, y,
                                     0, 0, 1);
     }
     if (glfwGetKey(window, GLFW_KEY_D)) {
-        x +=  0.001f;
+        x +=  0.003f;
         
         curTranslation = glm::mat3(0.0, 1.0, x,
             -1.0, 0.0, y,
             0.0, 0.0, 1.0);
     }
     if (glfwGetKey(window, GLFW_KEY_A)) {
-        x -= 0.001f;
+        x -= 0.003f;
        
        curTranslation = glm::mat3(0, -1, x,
             1, 0, y,
             0, 0, 1);
     }
     
-    //curTranslation = curTranslation * myRescale;
-    shaderTranslation = glm::mat4(  curTranslation[0][0], curTranslation[0][1],  0, curTranslation[0][2],
-                                    curTranslation[1][0], curTranslation[1][1],  0, curTranslation[1][2],
-                                    curTranslation[2][0], curTranslation[2][1], curTranslation[2][2], 0,
+    
+    
+    mvp_matrix = glm::mat4(  curTranslation[0][0] , curTranslation[0][1],  0, curTranslation[0][2],
+                                    curTranslation[1][0], curTranslation[1][1]  ,  0, curTranslation[1][2],
+                                    curTranslation[2][0], curTranslation[2][1], curTranslation[2][2] , 0,
                                     0, 0, 0, 1);
 
-        
+
+	//scaling the final result
+    mvp_matrix = mvp_matrix * glm::mat4(
+        0.5, 0, 0, 0,
+		0, 0.5, 0, 0,
+		0, 0, 0.5, 0,
+        0, 0, 0, 1);
         
     
 
     matrix = glGetUniformLocation(programID, "Translation");
-    glUniformMatrix4fv(matrix, 1, GL_FALSE, &shaderTranslation[0][0]);
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp_matrix[0][0]);
 
-  initializeVertexbuffer();
-  initializeColorbuffer();
+ 
   // Clear the screen
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -209,7 +225,7 @@ bool initializeWindow()
 
 bool initializeColorbuffer()
 {
-    static GLfloat g_color_buffer_data[9];
+    static GLfloat g_color_buffer_data[18];
     g_color_buffer_data[0] = 1;
     g_color_buffer_data[1] = 0;
     g_color_buffer_data[2] = 0;
@@ -221,6 +237,21 @@ bool initializeColorbuffer()
     g_color_buffer_data[6] = 1;
     g_color_buffer_data[7] = 0;
     g_color_buffer_data[8] = 0;
+
+    g_color_buffer_data[9] = 0;
+    g_color_buffer_data[10] = 1;
+    g_color_buffer_data[11] = 0;
+
+    g_color_buffer_data[12] = 0;
+    g_color_buffer_data[13] = 1;
+    g_color_buffer_data[14] = 0;
+
+    g_color_buffer_data[15] = 0;
+    g_color_buffer_data[16] = 1;
+    g_color_buffer_data[17] = 0;
+
+
+
 
     glDeleteBuffers(1, &colorbuffer);
     glGenBuffers(1, &colorbuffer);
@@ -263,9 +294,11 @@ bool initializeVertexbuffer()
     g_vertex_buffer_data[0] = triangleVertice1[0];
     g_vertex_buffer_data[1] = triangleVertice1[1];
     g_vertex_buffer_data[2] = 0.0f;
+	
     g_vertex_buffer_data[3] = triangleVertice2[0];
     g_vertex_buffer_data[4] = triangleVertice2[1];
     g_vertex_buffer_data[5] = 0.0f;
+	
     g_vertex_buffer_data[6] = triangleVertice3[0];
     g_vertex_buffer_data[7] = triangleVertice3[1];
     g_vertex_buffer_data[8] = 0.0f;
@@ -274,9 +307,11 @@ bool initializeVertexbuffer()
     g_vertex_buffer_data[9] = triangleVertice4[0];
     g_vertex_buffer_data[10] = triangleVertice4[1];
     g_vertex_buffer_data[11] = 0.0f;
+	
     g_vertex_buffer_data[12] = triangleVertice5[0];
     g_vertex_buffer_data[13] = triangleVertice5[1];
     g_vertex_buffer_data[14] = 0.0f;
+	
     g_vertex_buffer_data[15] = triangleVertice6[0];
     g_vertex_buffer_data[16] = triangleVertice6[1];
     g_vertex_buffer_data[17] = 0.0f;

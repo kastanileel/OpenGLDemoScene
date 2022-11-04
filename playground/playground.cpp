@@ -12,6 +12,9 @@ GLFWwindow* window;
 #include <glm/glm.hpp>
 using namespace glm;
 #include <common/shader.hpp>
+
+
+//own imports
 #include <vector>
 
 
@@ -41,6 +44,10 @@ int main( void )
 {
     x = 0.0;
     y = 0.0;
+
+  //TODO
+  // find a way to dynamically change the size of the buffers to "spawn" objects  
+
   //Initialize windowd
   bool windowInitialized = initializeWindow();
   if (!windowInitialized) return -1;
@@ -81,7 +88,8 @@ int main( void )
 
 void updateAnimationLoop()
 {
-
+    //TODO
+    // Make this object oriented -> the matrix has to be different for different objects
     //Analyze User Inputs
     if (glfwGetKey(window, GLFW_KEY_W)) {
         y += 0.003f ;
@@ -216,7 +224,7 @@ bool initializeWindow()
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-  // Dark blue background
+  // White background
   glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
   return true;
 }

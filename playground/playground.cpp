@@ -17,6 +17,79 @@ using namespace glm;
 //own imports
 #include <vector>
 
+//classes
+
+class GameObject {
+public:
+    glm::mat4 translation;
+
+
+};
+
+
+class Player : GameObject{
+    int hitpoints;
+    
+    public: 
+        Player(int hp, glm::mat4 translation_g) {
+            hitpoints = hp;
+            
+        }
+
+};
+
+class Enemy : GameObject{
+    int hitpoints;
+    glm::vec2 position;
+
+    public:
+        Enemy(int hp, glm::mat4 translation_g) {
+            hitpoints = hp;
+            translation = translation_g;
+        }
+};
+
+
+class Projectile : GameObject{
+    int damage;
+    
+    public:
+        Projectile(glm::mat4 translation_g, int dmg) {
+            translation = translation_g;
+            damage = dmg;
+        }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 glm::mat2 myRotation;

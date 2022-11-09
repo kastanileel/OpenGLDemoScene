@@ -15,10 +15,7 @@ using namespace glm;
 #include <common/shader.hpp>
 
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 //own imports
 #include <vector>
 
@@ -26,48 +23,6 @@ using namespace glm;
 
 class GameObject {
 public:
-<<<<<<< Updated upstream
-    glm::mat4 translation;
-
-
-};
-
-
-class Player : GameObject{
-    int hitpoints;
-    
-    public: 
-        Player(int hp, glm::mat4 translation_g) {
-            hitpoints = hp;
-            
-        }
-
-};
-
-class Enemy : GameObject{
-    int hitpoints;
-    glm::vec2 position;
-
-    public:
-        Enemy(int hp, glm::mat4 translation_g) {
-            hitpoints = hp;
-            translation = translation_g;
-        }
-};
-
-
-class Projectile : GameObject{
-    int damage;
-    
-    public:
-        Projectile(glm::mat4 translation_g, int dmg) {
-            translation = translation_g;
-            damage = dmg;
-        }
-};
-
-
-=======
     //some global variables for handling the vertex sbuffer
     GLuint vertexbuffer;
 
@@ -121,19 +76,10 @@ class Projectile : GameObject{
             0,
             (void*)0
         );
->>>>>>> Stashed changes
 
 
 
 
-<<<<<<< Updated upstream
-
-
-
-
-
-
-=======
         // Draw the triangle !
         glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle
 
@@ -165,23 +111,10 @@ class Projectile : GameObject{
         g_color_buffer_data[15] = 0;
         g_color_buffer_data[16] = 1;
         g_color_buffer_data[17] = 0;
->>>>>>> Stashed changes
 
 
 
 
-<<<<<<< Updated upstream
-
-
-
-
-
-
-
-
-
-
-=======
         glDeleteBuffers(1, &colorbuffer);
         glGenBuffers(1, &colorbuffer);
         glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
@@ -209,7 +142,6 @@ class Projectile : GameObject{
         glm::vec2 triangleVertice4 = glm::vec2(2.0f, 1.0f);
         glm::vec2 triangleVertice5 = glm::vec2(1.0f, -1.0f);
         glm::vec2 triangleVertice6 = glm::vec2(0.0f, 1.0f);
->>>>>>> Stashed changes
 
 
 
@@ -360,8 +292,6 @@ int main( void )
 {
     x = 0.0;
     y = 0.0;
-<<<<<<< Updated upstream
-=======
     enemyCount = 0;
 
 
@@ -387,7 +317,6 @@ int main( void )
 
 
      
->>>>>>> Stashed changes
 
   //TODO
   // find a way to dynamically change the size of the buffers to "spawn" objects  
@@ -434,13 +363,10 @@ int main( void )
 
 void updateAnimationLoop()
 {
-<<<<<<< Updated upstream
-=======
     
 
     x = 0;
     y = 0;
->>>>>>> Stashed changes
     //TODO
     // Make this object oriented -> the matrix has to be different for different objects
     //Analyze User Inputs

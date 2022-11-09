@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 // Include GLFW
 #include <glfw3.h>
 GLFWwindow* window;
@@ -14,6 +15,10 @@ using namespace glm;
 #include <common/shader.hpp>
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 //own imports
 #include <vector>
 
@@ -21,6 +26,7 @@ using namespace glm;
 
 class GameObject {
 public:
+<<<<<<< Updated upstream
     glm::mat4 translation;
 
 
@@ -61,6 +67,110 @@ class Projectile : GameObject{
 };
 
 
+=======
+    //some global variables for handling the vertex sbuffer
+    GLuint vertexbuffer;
+
+    //modified
+    GLuint colorbuffer;
+
+
+    GLuint VertexArrayID;
+    GLuint vertexbuffer_size;
+    glm::mat4 translation;
+    virtual void update(glm::mat4* mvp) = 0;
+    void draw() {
+
+        glm::mat4 mvp_matrix = translation;
+        mvp_matrix = mvp_matrix * glm::mat4(
+            0.5, 0, 0, 0,
+            0, 0.5, 0, 0,
+            0, 0, 0.5, 0,
+            0, 0, 0, 1
+        );
+
+		
+
+
+        matrix = glGetUniformLocation(programID, "Translation");
+        glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp_matrix[0][0]);
+
+        // Use our shader
+        glUseProgram(programID);
+
+        // 1rst attribute buffer : vertices
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glVertexAttribPointer(
+            0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+            3,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+        );
+
+        //2nd attribute buffer : color
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+        glVertexAttribPointer(
+            1,
+            3,
+            GL_FLOAT,
+            GL_FALSE,
+            0,
+            (void*)0
+        );
+>>>>>>> Stashed changes
+
+
+
+
+<<<<<<< Updated upstream
+
+
+
+
+
+
+=======
+        // Draw the triangle !
+        glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle
+
+        glDisableVertexAttribArray(0);
+    }
+    bool initializeColorbuffer()
+    {
+        static GLfloat g_color_buffer_data[18];
+        g_color_buffer_data[0] = 1;
+        g_color_buffer_data[1] = 0;
+        g_color_buffer_data[2] = 0;
+
+        g_color_buffer_data[3] = 1;
+        g_color_buffer_data[4] = 0;
+        g_color_buffer_data[5] = 0;
+
+        g_color_buffer_data[6] = 1;
+        g_color_buffer_data[7] = 0;
+        g_color_buffer_data[8] = 0;
+
+        g_color_buffer_data[9] = 0;
+        g_color_buffer_data[10] = 1;
+        g_color_buffer_data[11] = 0;
+
+        g_color_buffer_data[12] = 0;
+        g_color_buffer_data[13] = 1;
+        g_color_buffer_data[14] = 0;
+
+        g_color_buffer_data[15] = 0;
+        g_color_buffer_data[16] = 1;
+        g_color_buffer_data[17] = 0;
+>>>>>>> Stashed changes
+
+
+
+
+<<<<<<< Updated upstream
 
 
 
@@ -71,6 +181,35 @@ class Projectile : GameObject{
 
 
 
+=======
+        glDeleteBuffers(1, &colorbuffer);
+        glGenBuffers(1, &colorbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+
+
+        return true;
+    }
+
+    bool initializeVertexbuffer()
+    {
+
+
+        glGenVertexArrays(1, &VertexArrayID);
+        glBindVertexArray(VertexArrayID);
+
+
+
+        vertexbuffer_size = 6;
+        glm::vec2 triangleVertice1 = glm::vec2(-1.0f, -1.0f);
+        glm::vec2 triangleVertice2 = glm::vec2(1.0f, -1.0f);
+        glm::vec2 triangleVertice3 = glm::vec2(0.0f, 1.0f);
+
+        glm::vec2 triangleVertice4 = glm::vec2(2.0f, 1.0f);
+        glm::vec2 triangleVertice5 = glm::vec2(1.0f, -1.0f);
+        glm::vec2 triangleVertice6 = glm::vec2(0.0f, 1.0f);
+>>>>>>> Stashed changes
 
 
 
@@ -81,23 +220,127 @@ class Projectile : GameObject{
 
 
 
+        static GLfloat g_vertex_buffer_data[18];
+        g_vertex_buffer_data[0] = triangleVertice1[0];
+        g_vertex_buffer_data[1] = triangleVertice1[1];
+        g_vertex_buffer_data[2] = 0.0f;
+
+        g_vertex_buffer_data[3] = triangleVertice2[0];
+        g_vertex_buffer_data[4] = triangleVertice2[1];
+        g_vertex_buffer_data[5] = 0.0f;
+
+        g_vertex_buffer_data[6] = triangleVertice3[0];
+        g_vertex_buffer_data[7] = triangleVertice3[1];
+        g_vertex_buffer_data[8] = 0.0f;
+
+
+        g_vertex_buffer_data[9] = triangleVertice4[0];
+        g_vertex_buffer_data[10] = triangleVertice4[1];
+        g_vertex_buffer_data[11] = 0.0f;
+
+        g_vertex_buffer_data[12] = triangleVertice5[0];
+        g_vertex_buffer_data[13] = triangleVertice5[1];
+        g_vertex_buffer_data[14] = 0.0f;
+
+        g_vertex_buffer_data[15] = triangleVertice6[0];
+        g_vertex_buffer_data[16] = triangleVertice6[1];
+        g_vertex_buffer_data[17] = 0.0f;
 
 
 
 
 
 
+        glGenBuffers(1, &vertexbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+        return true;
+    }
+
+    bool cleanupVertexbuffer()
+    {
+        // Cleanup VBO
+        glDeleteBuffers(1, &vertexbuffer);
+
+        glDeleteVertexArrays(1, &VertexArrayID);
+        return true;
+    }
+
+    bool cleanupColorbuffer() {
+        glDeleteBuffers(1, &colorbuffer);
+        glDeleteVertexArrays(1, &VertexArrayID);
+        return true;
+    }
+
+};
+
+
+class Player : public GameObject{
+    int hitpoints;
+    
+    public: 
+        Player(int hp, glm::mat4 translation_g) {
+            hitpoints = hp;
+            translation = translation_g;
+        }
+        void update  (glm::mat4* mvp) override {
+			translation = translation * *mvp;
+
+            glm::mat4 test = *mvp;
+
+            //std::cout << test[0][3] << std::endl;
+            //std::cout << test[1][3] << std::endl;
+            draw();
+
+			
+        }
+};
+
+class Enemy : public GameObject{
+    int hitpoints;
+    glm::vec2 position;
+
+    public:
+        Enemy(int hp, glm::mat4 translation_g) {
+            hitpoints = hp;
+            translation = translation_g;
+        }
+        void update(glm::mat4* mvp) override {
+            
+            draw();
+
+
+        }
+};
+
+
+class Projectile : public GameObject{
+    int damage;
+    
+    public:
+        Projectile(glm::mat4 translation_g, int dmg) {
+            translation = translation_g;
+            damage = dmg;
+        }
+        void update(glm::mat4* mvp) override {
+            translation = translation;
+            draw();
+
+
+        }
+};
 
 
 
 
-
-glm::mat2 myRotation;
-glm::mat3 myTranslation;
-glm::mat2 myScale;
+//global variable
+std::vector<GameObject*> gameObjects;
 glm::mat4 mvp_matrix;
-glm::mat3 curTranslation;
 float x, y;
+bool playerLives;
+int enemyCount;
+
 
 
 //define size of screens
@@ -117,6 +360,34 @@ int main( void )
 {
     x = 0.0;
     y = 0.0;
+<<<<<<< Updated upstream
+=======
+    enemyCount = 0;
+
+
+	
+    glm::mat4 test = glm::mat4(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    );
+
+     Player p =  Player(10,test );
+     gameObjects.push_back(&p);
+
+     test = glm::mat4(
+         1, 0, 0, 0.2,
+         0, 1, 0, 0.2,
+         0, 0, 1, 0,
+         0, 0, 0, 1
+     );
+     Enemy e = Enemy(10, test);
+     gameObjects.push_back(&e);
+
+
+     
+>>>>>>> Stashed changes
 
   //TODO
   // find a way to dynamically change the size of the buffers to "spawn" objects  
@@ -126,11 +397,10 @@ int main( void )
   if (!windowInitialized) return -1;
 
   //Initialize vertex buffer
-  bool vertexbufferInitialized = initializeVertexbuffer();
-  if (!vertexbufferInitialized) return -1;
-
-  bool colorbufferInitialized = initializeColorbuffer();
-  if (!colorbufferInitialized) return -1;
+  for (int i = 0; i < gameObjects.size(); i++) {
+      gameObjects[i]->initializeColorbuffer();
+      gameObjects[i]->initializeVertexbuffer();
+    }
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
@@ -150,8 +420,11 @@ int main( void )
 
 	
   //Cleanup and close window
-  cleanupVertexbuffer();
-  cleanupColorbuffer();
+    for (int i = 0; i < gameObjects.size(); i++) {
+        gameObjects[i]->cleanupColorbuffer();
+        gameObjects[i]->cleanupVertexbuffer();
+    }
+  ;
   //cleanupColorbuffer();
   glDeleteProgram(programID);
 	closeWindow();
@@ -161,95 +434,71 @@ int main( void )
 
 void updateAnimationLoop()
 {
+<<<<<<< Updated upstream
+=======
+    
+
+    x = 0;
+    y = 0;
+>>>>>>> Stashed changes
     //TODO
     // Make this object oriented -> the matrix has to be different for different objects
     //Analyze User Inputs
     if (glfwGetKey(window, GLFW_KEY_W)) {
-        y += 0.003f ;
-        curTranslation = glm::mat3( 1,  0,  x,
-                                    0,  1,  y,
-                                    0,  0,  1);
+        y += 0.003f;
+        
+
+        
     }
 
     if (glfwGetKey(window, GLFW_KEY_S)) {
-        y -= 0.003f;
-       curTranslation = glm::mat3(-1, 0, x,
-                                    0, -1, y,
-                                    0, 0, 1);
+        
+
+        y += -0.003f;
+        
+       
     }
     if (glfwGetKey(window, GLFW_KEY_D)) {
-        x +=  0.003f;
         
-        curTranslation = glm::mat3(0.0, 1.0, x,
-            -1.0, 0.0, y,
-            0.0, 0.0, 1.0);
+        
+        
+        x += 0.003f;
     }
     if (glfwGetKey(window, GLFW_KEY_A)) {
-        x -= 0.003f;
+        
        
-       curTranslation = glm::mat3(0, -1, x,
-            1, 0, y,
-            0, 0, 1);
+        
+        x += -0.003f;
     }
     
     
+    mvp_matrix = glm::mat4(
+        1, 0, 0, x,
+        0, 1, 0, y,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    );
     
-    mvp_matrix = glm::mat4(  curTranslation[0][0] , curTranslation[0][1],  0, curTranslation[0][2],
-                                    curTranslation[1][0], curTranslation[1][1]  ,  0, curTranslation[1][2],
-                                    curTranslation[2][0], curTranslation[2][1], curTranslation[2][2] , 0,
-                                    0, 0, 0, 1);
+	
+    
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    for (int i = 0; i < gameObjects.size(); i++) {
+       
 
 
-	//scaling the final result
-    mvp_matrix = mvp_matrix * glm::mat4(
-        0.5, 0, 0, 0,
-		0, 0.5, 0, 0,
-		0, 0, 0.5, 0,
-        0, 0, 0, 1);
+        // Clear the screen
+
+        gameObjects[i]->update(&mvp_matrix);
+        //std::cout << mvp_matrix[0][3] << std::endl;
+        //std::cout << mvp_matrix[1][3] << std::endl;
         
+    }
+
+  
     
-
-    matrix = glGetUniformLocation(programID, "Translation");
-    glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp_matrix[0][0]);
-
- 
-  // Clear the screen
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  // Use our shader
-  glUseProgram(programID);
-
-  // 1rst attribute buffer : vertices
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-  glVertexAttribPointer(
-    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-    3,                  // size
-    GL_FLOAT,           // type
-    GL_FALSE,           // normalized?
-    0,                  // stride
-    (void*)0            // array buffer offset
-  );
-
-  //2nd attribute buffer : color
-  glEnableVertexAttribArray(1);
-  glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-  glVertexAttribPointer(
-      1,
-      3,
-      GL_FLOAT,
-      GL_FALSE,
-      0,
-      (void*)0
-  );
-
-
-
-
-  // Draw the triangle !
-  glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle
-
-  glDisableVertexAttribArray(0);
+	//scaling the final result
+   
   glDisableVertexAttribArray(1);
 
 
@@ -304,125 +553,7 @@ bool initializeWindow()
 
 
 
-bool initializeColorbuffer()
-{
-    static GLfloat g_color_buffer_data[18];
-    g_color_buffer_data[0] = 1;
-    g_color_buffer_data[1] = 0;
-    g_color_buffer_data[2] = 0;
 
-    g_color_buffer_data[3] = 1;
-    g_color_buffer_data[4] = 0;
-    g_color_buffer_data[5] = 0;
-
-    g_color_buffer_data[6] = 1;
-    g_color_buffer_data[7] = 0;
-    g_color_buffer_data[8] = 0;
-
-    g_color_buffer_data[9] = 0;
-    g_color_buffer_data[10] = 1;
-    g_color_buffer_data[11] = 0;
-
-    g_color_buffer_data[12] = 0;
-    g_color_buffer_data[13] = 1;
-    g_color_buffer_data[14] = 0;
-
-    g_color_buffer_data[15] = 0;
-    g_color_buffer_data[16] = 1;
-    g_color_buffer_data[17] = 0;
-
-
-
-
-    glDeleteBuffers(1, &colorbuffer);
-    glGenBuffers(1, &colorbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-
-
-
-    return true;
-}
-
-bool initializeVertexbuffer()
-{
-
-  
-  glGenVertexArrays(1, &VertexArrayID);
-  glBindVertexArray(VertexArrayID);
-  
-
-
-  vertexbuffer_size = 6;
-  glm::vec2 triangleVertice1 = glm::vec2(-1.0f, -1.0f);
-  glm::vec2 triangleVertice2 = glm::vec2(1.0f, -1.0f);
-  glm::vec2 triangleVertice3 = glm::vec2(0.0f, 1.0f);
-
-  glm::vec2 triangleVertice4 = glm::vec2(2.0f, 1.0f);
-  glm::vec2 triangleVertice5 = glm::vec2(1.0f, -1.0f);
-  glm::vec2 triangleVertice6 = glm::vec2(0.0f, 1.0f);
-
-  
-
-  
-
-
-  
-
-
-
-  static GLfloat g_vertex_buffer_data[18];
-    g_vertex_buffer_data[0] = triangleVertice1[0];
-    g_vertex_buffer_data[1] = triangleVertice1[1];
-    g_vertex_buffer_data[2] = 0.0f;
-	
-    g_vertex_buffer_data[3] = triangleVertice2[0];
-    g_vertex_buffer_data[4] = triangleVertice2[1];
-    g_vertex_buffer_data[5] = 0.0f;
-	
-    g_vertex_buffer_data[6] = triangleVertice3[0];
-    g_vertex_buffer_data[7] = triangleVertice3[1];
-    g_vertex_buffer_data[8] = 0.0f;
-    
-
-    g_vertex_buffer_data[9] = triangleVertice4[0];
-    g_vertex_buffer_data[10] = triangleVertice4[1];
-    g_vertex_buffer_data[11] = 0.0f;
-	
-    g_vertex_buffer_data[12] = triangleVertice5[0];
-    g_vertex_buffer_data[13] = triangleVertice5[1];
-    g_vertex_buffer_data[14] = 0.0f;
-	
-    g_vertex_buffer_data[15] = triangleVertice6[0];
-    g_vertex_buffer_data[16] = triangleVertice6[1];
-    g_vertex_buffer_data[17] = 0.0f;
-
- 
-
-
-
-
-  glGenBuffers(1, &vertexbuffer);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-  return true;
-}
-
-bool cleanupVertexbuffer()
-{
-  // Cleanup VBO
-  glDeleteBuffers(1, &vertexbuffer);
-    
-  glDeleteVertexArrays(1, &VertexArrayID);
-  return true;
-}
-
-bool cleanupColorbuffer() {
-    glDeleteBuffers(1, &colorbuffer);
-    glDeleteVertexArrays(1, &VertexArrayID);
-    return true;
-}
 
 
 bool closeWindow()

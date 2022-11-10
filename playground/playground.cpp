@@ -19,6 +19,7 @@ using namespace glm;
 //own includes
 #include <vector>
 #include <chrono>
+#include <cmath>
 
 
 
@@ -309,11 +310,121 @@ class Enemy : public GameObject{
         bool isActive;
         glm::vec2 playerposition_enemy;
 
+        bool initializeVertexbuffer() override {
+            glGenVertexArrays(1, &VertexArrayID);
+            glBindVertexArray(VertexArrayID);
+
+
+
+            vertexbuffer_size = 18;
+            
+            std::vector<glm::vec2*> vertices;
+
+            
+            
+            glm::vec2 triangleVertice1 = glm::vec2(6.0f, 0.0f);
+            glm::vec2 triangleVertice2 = glm::vec2(3.0f, 3* sqrt(3.0f));
+            glm::vec2 triangleVertice3 = glm::vec2(0.0f, 0.0f);
+
+            glm::vec2 triangleVertice4 = glm::vec2(3.0f, 3 * sqrt(3.0f));
+            glm::vec2 triangleVertice5 = glm::vec2(-3.0f, 3 * sqrt(3.0f));
+            glm::vec2 triangleVertice6 = glm::vec2(0.0f, 0.0f);
+
+            glm::vec2 triangleVertice7 = glm::vec2(-3.0f, 3 * sqrt(3.0f));
+            glm::vec2 triangleVertice8 = glm::vec2(-6.0f, 0);
+            glm::vec2 triangleVertice9 = glm::vec2(0.0f, 0.0f);
+
+            glm::vec2 triangleVertice10 = glm::vec2(-6.0f, 0);
+            glm::vec2 triangleVertice11 = glm::vec2(-3.0f, -3 * sqrt(3.0f));
+            glm::vec2 triangleVertice12 = glm::vec2(0.0f, 0.0f);
+
+            glm::vec2 triangleVertice13 = glm::vec2(-3.0f, -3 * sqrt(3.0f));
+            glm::vec2 triangleVertice14 = glm::vec2(3.0f, -3 * sqrt(3.0f));
+            glm::vec2 triangleVertice15 = glm::vec2(0.0f, 0.0f);
+
+            glm::vec2 triangleVertice16 = glm::vec2(3.0f, -3 * sqrt(3.0f));
+            glm::vec2 triangleVertice17 = glm::vec2(6.0f, 0.0f);
+            glm::vec2 triangleVertice18 = glm::vec2(0.0f, 0.0f);
+            vertices.push_back(&triangleVertice1);
+            vertices.push_back(&triangleVertice2);
+            vertices.push_back(&triangleVertice3);
+            vertices.push_back(&triangleVertice4);
+            vertices.push_back(&triangleVertice5);
+            vertices.push_back(&triangleVertice6);
+            vertices.push_back(&triangleVertice7);
+            vertices.push_back(&triangleVertice8);
+            vertices.push_back(&triangleVertice9);
+            vertices.push_back(&triangleVertice10);
+            vertices.push_back(&triangleVertice11);
+            vertices.push_back(&triangleVertice12);
+            vertices.push_back(&triangleVertice13);
+            vertices.push_back(&triangleVertice14);
+            vertices.push_back(&triangleVertice15);
+            vertices.push_back(&triangleVertice16);
+            vertices.push_back(&triangleVertice17); 
+            vertices.push_back(&triangleVertice18); 
+
+
+
+
+            static GLfloat g_vertex_buffer_data[54];
+
+            for (int i = 0; i < vertices.size(); i++) {
+                glm::vec2 cur = *vertices[i];
+                g_vertex_buffer_data[3*i] = float(cur[0]);
+                g_vertex_buffer_data[3*i+1] = float(cur[1]);
+				g_vertex_buffer_data[3*i + 2] = 0.0f;
+                std::cout <<  "x: " << g_vertex_buffer_data[i] << " y: " << g_vertex_buffer_data[i + 1] << std::endl;
+            } 
+           
+            /*g_vertex_buffer_data[0] = 6.0f;
+            g_vertex_buffer_data[1] = 0.0f;
+            g_vertex_buffer_data[2] = 0.0f;
+
+            g_vertex_buffer_data[3] = 3.0f;
+            g_vertex_buffer_data[4] = 3 * sqrt(3.0f);
+            g_vertex_buffer_data[5] = 0.0f;
+
+            g_vertex_buffer_data[6] = 0;
+            g_vertex_buffer_data[7] = 0;
+            g_vertex_buffer_data[8] = 0.0f;
+            */
+
+
+
+
+			
+
+
+            glGenBuffers(1, &vertexbuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+            return true;
+
+        }
+
+        bool initializeColorbuffer() override {
+            static GLfloat g_color_buffer_data[54];
+			
+            for (int i = 0; i < 54; i++) {
+                g_color_buffer_data[i] = 1;
+            }
+         
+
+            glDeleteBuffers(1, &colorbuffer);
+            glGenBuffers(1, &colorbuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+            return true;
+			
+        }
 		
         Enemy(int hp, glm::mat4 translation_g) {
             hitpoints = hp;
             translation = translation_g;
-            speed = 0.02f;
+            speed = 0.01f;
             isActive = false;
             
         }
@@ -344,9 +455,13 @@ class Enemy : public GameObject{
             if (isActive)
             {
                 translation[0][3] = translation[0][3] + (playerposition_enemy[0] - translation[0][3]) * speed;
-
-				std::cout << "moving to: x= " << playerposition_enemy[0] << std::endl;
-                //translation[1][3] = translation[1][3] + (playertranslation[1][3] - translation[1][3]) * speed;
+				
+                if (translation[1][3] > playerposition_enemy[1]) {
+                    translation[1][3] = translation[1][3] - speed / 30;
+                    //std::cout << "moving to: y= " << playerposition_enemy[1] << std::endl;
+                }
+				//std::cout << "moving to: x= " << playerposition_enemy[0] << std::endl;
+               
 
 
 				
@@ -357,7 +472,7 @@ class Enemy : public GameObject{
 
 
 			
-            draw(0.1f);
+            draw(0.02f);
 
 
         }

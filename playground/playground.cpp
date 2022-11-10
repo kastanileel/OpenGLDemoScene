@@ -239,7 +239,7 @@ class Player : public GameObject{
             //std::cout << test[0][3] << std::endl;
             //std::cout << test[1][3] << std::endl;
             draw(0.1f);
-
+			
 			
         }
 		bool initializeVertexbuffer() override {
@@ -307,7 +307,7 @@ class Enemy : public GameObject{
 
     public:
         bool isActive;
-
+        glm::vec2 playerposition_enemy;
 
 		
         Enemy(int hp, glm::mat4 translation_g) {
@@ -315,8 +315,12 @@ class Enemy : public GameObject{
             translation = translation_g;
             speed = 0.02f;
             isActive = false;
+            
         }
         void update(glm::mat4* mvp) override {
+            glm::mat4 playertranslation = *mvp;
+
+			
             if (!isActive) {
                 translation = glm::mat4(
                     1, 0, 0, 10,
@@ -325,6 +329,29 @@ class Enemy : public GameObject{
                     0, 0, 0, 1
                 );
             }
+
+            if (
+                translation[0][3] > 2.0f || translation[0][3] < -2.0f ||
+                translation[1][3] > 2.0f || translation[1][3] < -2.0f
+                ) {
+                isActive = false;
+            }
+
+
+
+
+			
+            if (isActive)
+            {
+                translation[0][3] = translation[0][3] + (playerposition_enemy[0] - translation[0][3]) * speed;
+
+				std::cout << "moving to: x= " << playerposition_enemy[0] << std::endl;
+                //translation[1][3] = translation[1][3] + (playertranslation[1][3] - translation[1][3]) * speed;
+
+
+				
+            }
+            
 
            
 
@@ -478,6 +505,8 @@ std::vector<Player*> players;
 
 
 glm::mat4 mvp_matrix;
+glm::vec2 playerPos;
+
 float x, y;
 bool playerLives;
 int enemyCount;
@@ -516,6 +545,7 @@ int main( void )
     );
 
      Player p =  Player(10,test );
+     playerPos = glm::vec2(p.translation[0][3], p.translation[1][3]);
      gameObjects.push_back(&p);
      players.push_back(&p);
 
@@ -526,7 +556,8 @@ int main( void )
          0, 0, 0, 1
      );
      Enemy e = Enemy(10, test);
-     //gameObjects.push_back(&e);
+     e.isActive = true;
+     gameObjects.push_back(&e);
 	 enemies.push_back(&e);
 
 	
@@ -595,16 +626,8 @@ void updateAnimationLoop()
 
     x = 0;
     y = 0;
-    //TODO
-    // Make this object oriented -> the matrix has to be different for different objects
-    //Analyze User Inputs
-    /*if (glfwGetKey(window, GLFW_KEY_W)) {
-        y += 1;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_S)) {
-        y += -1;       
-    }*/
+   
+	//Analyzing User Input
     if (glfwGetKey(window, GLFW_KEY_D)) {
         x += 1;
     }
@@ -641,8 +664,15 @@ void updateAnimationLoop()
 
     for (int i = 0; i < gameObjects.size(); i++) {
         gameObjects[i]->update(&mvp_matrix);
+        if (i == 0) {
+            playerPos = glm::vec2(gameObjects[i]->translation[0][3], gameObjects[i]->translation[1][3]);
+			//for all enemies
+            for (int j = 0; j < enemies.size(); j++) {
+                enemies[j]->playerposition_enemy = playerPos;
+            }
+        }
     }
-
+   
   
     
   glDisableVertexAttribArray(1);

@@ -16,8 +16,12 @@ using namespace glm;
 
 
 
-//own imports
+//own includes
 #include <vector>
+#include <chrono>
+
+
+
 
 //classes
 
@@ -342,7 +346,7 @@ class Projectile : public GameObject{
         Projectile(glm::mat4 translation_g, int dmg) {
             translation = translation_g;
             damage = dmg;
-            speed = 0.06f;
+            speed = 0.005f;
             isActive = false;
         }
         void update(glm::mat4* mvp) override {
@@ -367,7 +371,6 @@ class Projectile : public GameObject{
             }
 
             if (isActive) {
-                std::cout << "ACTIVE" << std::endl;
                 //translation[0][3] = translation[0][3] + speed;
                 translation[1][3] = translation[1][3] + speed;
             }
@@ -383,13 +386,13 @@ class Projectile : public GameObject{
 
 
             vertexbuffer_size = 6;
-            glm::vec2 triangleVertice1 = glm::vec2(-1.0f, -1.0f);
-            glm::vec2 triangleVertice2 = glm::vec2(-1.0f, 1.0f);
-            glm::vec2 triangleVertice3 = glm::vec2(0.0f, 1.0f);
+            glm::vec2 triangleVertice1 = glm::vec2(-0.5f, -1.0f);
+            glm::vec2 triangleVertice2 = glm::vec2(-0.5f, 1.0f);
+            glm::vec2 triangleVertice3 = glm::vec2(0.5f, 1.0f);
 
-            glm::vec2 triangleVertice4 = glm::vec2(0.0f, 1.0f);
-            glm::vec2 triangleVertice5 = glm::vec2(0.0f, -1.0f);
-            glm::vec2 triangleVertice6 = glm::vec2(-1.0f, -1.0f);
+            glm::vec2 triangleVertice4 = glm::vec2(0.5f, 1.0f);
+            glm::vec2 triangleVertice5 = glm::vec2(0.5f, -1.0f);
+            glm::vec2 triangleVertice6 = glm::vec2(-0.5f, -1.0f);
 
             static GLfloat g_vertex_buffer_data[18];
             g_vertex_buffer_data[0] = triangleVertice1[0];
@@ -478,6 +481,8 @@ glm::mat4 mvp_matrix;
 float x, y;
 bool playerLives;
 int enemyCount;
+float fireCooldown = 0.2f;
+std::chrono::steady_clock::time_point lastFired;
 
 
 
@@ -500,7 +505,7 @@ int main( void )
     x = 0.0;
     y = 0.0;
     enemyCount = 0;
-
+	lastFired = std::chrono::steady_clock::now();
 
 	
     glm::mat4 test = glm::mat4(
@@ -532,7 +537,7 @@ int main( void )
          0, 0, 0, 1
      );
 
-     for (int i = 0; i < 1; i++) {
+     for (int i = 0; i < 10; i++) {
 		 Projectile p = Projectile(test, 10);
 		 gameObjects.push_back(&p);
          projectiles.push_back(&p);
@@ -609,13 +614,16 @@ void updateAnimationLoop()
 	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 		//for all projectiles
         for (int i = 0; i < projectiles.size(); i++) {
-            if (projectiles[i]->isActive != true) {
-                projectiles[i]->isActive = true;
-				projectiles[i]->translation = players[0]->translation;
+            if ((std::chrono::steady_clock::now() - lastFired).count() > fireCooldown) {
+                if (projectiles[i]->isActive != true) {
+                    projectiles[i]->isActive = true;
+                    projectiles[i]->translation = players[0]->translation;
+                    lastFired = std::chrono::steady_clock::now();
 
-				
-                break;
+                    break;
+                }
             }
+            
 						
         }
 		

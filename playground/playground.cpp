@@ -299,15 +299,33 @@ class Player : public GameObject{
 class Enemy : public GameObject{
     int hitpoints;
     glm::vec2 position;
+    
 
     public:
+        bool isActive;
+
+
+		
         Enemy(int hp, glm::mat4 translation_g) {
             hitpoints = hp;
             translation = translation_g;
-            speed = 0.1f;
+            speed = 0.02f;
+            isActive = false;
         }
         void update(glm::mat4* mvp) override {
-            
+            if (!isActive) {
+                translation = glm::mat4(
+                    1, 0, 0, 10,
+                    0, 1, 0, 10,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                );
+            }
+
+           
+
+
+			
             draw(0.1f);
 
 
@@ -318,16 +336,43 @@ class Enemy : public GameObject{
 class Projectile : public GameObject{
     int damage;
     
+	
     public:
+        bool isActive;
         Projectile(glm::mat4 translation_g, int dmg) {
             translation = translation_g;
             damage = dmg;
-            speed = 0.4f;
+            speed = 0.06f;
+            isActive = false;
         }
         void update(glm::mat4* mvp) override {
             translation = translation;
-            draw(0.05f);
 
+            if (!isActive) {
+                translation = glm::mat4(
+                    1, 0, 0, 10,
+                    0, 1, 0, 10,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+
+                );
+            }
+
+
+            if (
+                translation[0][3] > 2.0f || translation[0][3] < -2.0f ||
+                translation[1][3] > 2.0f || translation[1][3] < -2.0f
+                ) {
+                isActive = false;
+            }
+
+            if (isActive) {
+                std::cout << "ACTIVE" << std::endl;
+                //translation[0][3] = translation[0][3] + speed;
+                translation[1][3] = translation[1][3] + speed;
+            }
+			
+            draw(0.05f);
 
         }
         bool initializeVertexbuffer() override {
@@ -424,6 +469,11 @@ class Projectile : public GameObject{
 
 //global variable
 std::vector<GameObject*> gameObjects;
+std::vector<Enemy*> enemies;
+std::vector<Projectile*> projectiles;
+std::vector<Player*> players;
+
+
 glm::mat4 mvp_matrix;
 float x, y;
 bool playerLives;
@@ -462,6 +512,7 @@ int main( void )
 
      Player p =  Player(10,test );
      gameObjects.push_back(&p);
+     players.push_back(&p);
 
      test = glm::mat4(
          1, 0, 0, 0,
@@ -471,7 +522,9 @@ int main( void )
      );
      Enemy e = Enemy(10, test);
      //gameObjects.push_back(&e);
+	 enemies.push_back(&e);
 
+	
      test = glm::mat4(
          1, 0, 0, 0,
          0, 1, 0, 0,
@@ -482,6 +535,7 @@ int main( void )
      for (int i = 0; i < 1; i++) {
 		 Projectile p = Projectile(test, 10);
 		 gameObjects.push_back(&p);
+         projectiles.push_back(&p);
 	 }
 
 	
@@ -489,8 +543,6 @@ int main( void )
 
      
 
-  //TODO
-  // find a way to dynamically change the size of the buffers to "spawn" objects  
 
   //Initialize windowd
   bool windowInitialized = initializeWindow();
@@ -555,7 +607,18 @@ void updateAnimationLoop()
         x += -1;
     }
 	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-		//TODO
+		//for all projectiles
+        for (int i = 0; i < projectiles.size(); i++) {
+            if (projectiles[i]->isActive != true) {
+                projectiles[i]->isActive = true;
+				projectiles[i]->translation = players[0]->translation;
+
+				
+                break;
+            }
+						
+        }
+		
     }
     
     mvp_matrix = glm::mat4(

@@ -377,18 +377,7 @@ class Enemy : public GameObject{
                 std::cout <<  "x: " << g_vertex_buffer_data[i] << " y: " << g_vertex_buffer_data[i + 1] << std::endl;
             } 
            
-            /*g_vertex_buffer_data[0] = 6.0f;
-            g_vertex_buffer_data[1] = 0.0f;
-            g_vertex_buffer_data[2] = 0.0f;
-
-            g_vertex_buffer_data[3] = 3.0f;
-            g_vertex_buffer_data[4] = 3 * sqrt(3.0f);
-            g_vertex_buffer_data[5] = 0.0f;
-
-            g_vertex_buffer_data[6] = 0;
-            g_vertex_buffer_data[7] = 0;
-            g_vertex_buffer_data[8] = 0.0f;
-            */
+            
 
 
 
@@ -624,10 +613,12 @@ glm::vec2 playerPos;
 
 float x, y;
 bool playerLives;
-int enemyCount;
-float fireCooldown = 0.2f;
-std::chrono::steady_clock::time_point lastFired;
+int freeEnemySpawns;
 
+float fireCooldown = 1000.0f;
+float spawnCooldown = 2000.0f;
+std::chrono::steady_clock::time_point lastFired;
+std::chrono::steady_clock::time_point lastEnemy;
 
 
 
@@ -648,8 +639,9 @@ int main( void )
 {
     x = 0.0;
     y = 0.0;
-    enemyCount = 0;
+    freeEnemySpawns = 5;
 	lastFired = std::chrono::steady_clock::now();
+	lastEnemy = std::chrono::steady_clock::now();
 
 	
     glm::mat4 test = glm::mat4(
@@ -670,10 +662,10 @@ int main( void )
          0, 0, 1, 0,
          0, 0, 0, 1
      );
-     Enemy e = Enemy(10, test);
-     e.isActive = true;
-     gameObjects.push_back(&e);
-	 enemies.push_back(&e);
+     
+	    
+
+
 
 	
      test = glm::mat4(
@@ -683,13 +675,57 @@ int main( void )
          0, 0, 0, 1
      );
 
-     for (int i = 0; i < 10; i++) {
-		 Projectile p = Projectile(test, 10);
-		 gameObjects.push_back(&p);
-         projectiles.push_back(&p);
-	 }
+     
+      
+
+     
+     
+
+     Projectile pr1 = Projectile(test, 10);
+     gameObjects.push_back(&pr1);
+     projectiles.push_back(&pr1);
+
+     Projectile pr2 = Projectile(test, 10);
+     gameObjects.push_back(&pr2);
+     projectiles.push_back(&pr2);
+
+     Projectile pr3 = Projectile(test, 10);
+     gameObjects.push_back(&pr3);
+     projectiles.push_back(&pr3);
+
+     Projectile pr4 = Projectile(test, 10);
+     gameObjects.push_back(&pr4);
+     projectiles.push_back(&pr4);
+
+     Projectile pr5 = Projectile(test, 10);
+     gameObjects.push_back(&pr5);
+     projectiles.push_back(&pr5);
+
+    
 
 	
+	 Enemy e1 = Enemy(100, test);
+     enemies.push_back(&e1);
+     gameObjects.push_back(&e1);
+	
+     Enemy e2 = Enemy(100, test);
+     enemies.push_back(&e2);
+     gameObjects.push_back(&e2);
+
+     Enemy e3 = Enemy(100, test);
+     enemies.push_back(&e3);
+     gameObjects.push_back(&e3);
+	
+     Enemy e4 = Enemy(100, test);
+     enemies.push_back(&e4);
+     gameObjects.push_back(&e4);
+
+     Enemy e5 = Enemy(100, test);
+     enemies.push_back(&e5);
+     gameObjects.push_back(&e5);
+	
+	
+     
 
 
      
@@ -749,10 +785,12 @@ void updateAnimationLoop()
     if (glfwGetKey(window, GLFW_KEY_A)) {
         x += -1;
     }
+
+	//spawn a projectile if shooting is not on cooldown
 	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 		//for all projectiles
         for (int i = 0; i < projectiles.size(); i++) {
-            if ((std::chrono::steady_clock::now() - lastFired).count() > fireCooldown) {
+            if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastFired).count()) > fireCooldown) {
                 if (projectiles[i]->isActive != true) {
                     projectiles[i]->isActive = true;
                     projectiles[i]->translation = players[0]->translation;
@@ -766,6 +804,37 @@ void updateAnimationLoop()
         }
 		
     }
+
+    //spawn an enemy if there are less than maximum and spawning is not on cooldown
+	if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastEnemy).count()) > spawnCooldown) {
+        std::cout << "spawn cooldown over" <<std::endl;
+		if (freeEnemySpawns > 0) {
+            
+			//for all enemies check if they are inactive, take first inactive one
+			for (int i = 0; i < enemies.size(); i++) {
+                std::cout << "in the loop. Checking i= " << i << std::endl;
+				std::cout << enemies[i]->isActive << std::endl;
+				if (enemies[i]->isActive != true) {
+					std::cout << "found inactive enemy" << std::endl;
+					enemies[i]->isActive = true;
+                    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					
+					enemies[i]->translation = glm::mat4(
+						1, 0, 0, r,
+						0, 1, 0, 1,
+						0, 0, 1, 0,
+						0, 0, 0, 1
+					);
+					lastEnemy = std::chrono::steady_clock::now();
+					std::cout << "enemy spawned. x: "<< r << std::endl;
+					freeEnemySpawns--;
+					break;
+				}
+			}
+			lastEnemy = std::chrono::steady_clock::now();
+		}
+	}
+	
     
     mvp_matrix = glm::mat4(
         1, 0, 0, x,

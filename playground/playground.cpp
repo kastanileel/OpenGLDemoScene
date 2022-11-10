@@ -33,6 +33,10 @@ public:
     GLuint VertexArrayID;
     GLuint vertexbuffer_size;
     glm::mat4 translation;
+    float speed;
+
+
+	
     virtual void update(glm::mat4* mvp) = 0;
     void draw(float scale) {
 
@@ -44,7 +48,8 @@ public:
             0, 0, 0, 1
         );
 
-		
+        mvp_matrix[0][3] = mvp_matrix[0][3] /scale;
+        mvp_matrix[1][3] = mvp_matrix[1][3] /scale;
 
 
         matrix = glGetUniformLocation(programID, "Translation");
@@ -215,15 +220,21 @@ class Player : public GameObject{
         Player(int hp, glm::mat4 translation_g) {
             hitpoints = hp;
             translation = translation_g;
+            speed = 0.02f;
         }
         void update  (glm::mat4* mvp) override {
-			translation = translation * *mvp;
+            glm::mat4 finished_mvp = *mvp;
+
+            finished_mvp[0][3] = finished_mvp[0][3] * speed;
+            finished_mvp[1][3] = finished_mvp[1][3] * speed;
+			
+			translation = translation * finished_mvp;
 
             glm::mat4 test = *mvp;
 
             //std::cout << test[0][3] << std::endl;
             //std::cout << test[1][3] << std::endl;
-            draw(0.5f);
+            draw(0.1f);
 
 			
         }
@@ -293,10 +304,11 @@ class Enemy : public GameObject{
         Enemy(int hp, glm::mat4 translation_g) {
             hitpoints = hp;
             translation = translation_g;
+            speed = 0.1f;
         }
         void update(glm::mat4* mvp) override {
             
-            draw(1.0f);
+            draw(0.1f);
 
 
         }
@@ -310,12 +322,100 @@ class Projectile : public GameObject{
         Projectile(glm::mat4 translation_g, int dmg) {
             translation = translation_g;
             damage = dmg;
+            speed = 0.4f;
         }
         void update(glm::mat4* mvp) override {
             translation = translation;
-            draw(0.1f);
+            draw(0.05f);
 
 
+        }
+        bool initializeVertexbuffer() override {
+
+            glGenVertexArrays(1, &VertexArrayID);
+            glBindVertexArray(VertexArrayID);
+
+
+
+            vertexbuffer_size = 6;
+            glm::vec2 triangleVertice1 = glm::vec2(-1.0f, -1.0f);
+            glm::vec2 triangleVertice2 = glm::vec2(-1.0f, 1.0f);
+            glm::vec2 triangleVertice3 = glm::vec2(0.0f, 1.0f);
+
+            glm::vec2 triangleVertice4 = glm::vec2(0.0f, 1.0f);
+            glm::vec2 triangleVertice5 = glm::vec2(0.0f, -1.0f);
+            glm::vec2 triangleVertice6 = glm::vec2(-1.0f, -1.0f);
+
+            static GLfloat g_vertex_buffer_data[18];
+            g_vertex_buffer_data[0] = triangleVertice1[0];
+            g_vertex_buffer_data[1] = triangleVertice1[1];
+            g_vertex_buffer_data[2] = 0.0f;
+
+            g_vertex_buffer_data[3] = triangleVertice2[0];
+            g_vertex_buffer_data[4] = triangleVertice2[1];
+            g_vertex_buffer_data[5] = 0.0f;
+
+            g_vertex_buffer_data[6] = triangleVertice3[0];
+            g_vertex_buffer_data[7] = triangleVertice3[1];
+            g_vertex_buffer_data[8] = 0.0f;
+
+            g_vertex_buffer_data[9] = triangleVertice4[0];
+            g_vertex_buffer_data[10] = triangleVertice4[1];
+            g_vertex_buffer_data[11] = 0.0f;
+
+            g_vertex_buffer_data[12] = triangleVertice5[0];
+            g_vertex_buffer_data[13] = triangleVertice5[1];
+            g_vertex_buffer_data[14] = 0.0f;
+
+            g_vertex_buffer_data[15] = triangleVertice6[0];
+            g_vertex_buffer_data[16] = triangleVertice6[1];
+            g_vertex_buffer_data[17] = 0.0f;
+
+            glGenBuffers(1, &vertexbuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+            return true;
+
+        }
+
+        bool initializeColorbuffer() override {
+            static GLfloat g_color_buffer_data[18];
+            g_color_buffer_data[0] = 1;
+            g_color_buffer_data[1] = 1;
+            g_color_buffer_data[2] = 1;
+
+            g_color_buffer_data[3] = 1;
+            g_color_buffer_data[4] = 1;
+            g_color_buffer_data[5] = 1;
+
+            g_color_buffer_data[6] = 1;
+            g_color_buffer_data[7] = 1;
+            g_color_buffer_data[8] = 1;
+
+            g_color_buffer_data[9] = 1;
+            g_color_buffer_data[10] = 1;
+            g_color_buffer_data[11] = 1;
+
+            g_color_buffer_data[12] = 1;
+            g_color_buffer_data[13] = 1;
+            g_color_buffer_data[14] = 1;
+
+            g_color_buffer_data[15] = 1;
+            g_color_buffer_data[16] = 1;
+            g_color_buffer_data[17] = 1;
+
+
+
+
+            glDeleteBuffers(1, &colorbuffer);
+            glGenBuffers(1, &colorbuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+
+
+            return true;
         }
 };
 
@@ -328,6 +428,7 @@ glm::mat4 mvp_matrix;
 float x, y;
 bool playerLives;
 int enemyCount;
+
 
 
 
@@ -354,7 +455,7 @@ int main( void )
 	
     glm::mat4 test = glm::mat4(
         1, 0, 0, 0,
-        0, 1, 0, 0,
+        0, 1, 0, -0.8,
         0, 0, 1, 0,
         0, 0, 0, 1
     );
@@ -363,13 +464,27 @@ int main( void )
      gameObjects.push_back(&p);
 
      test = glm::mat4(
-         1, 0, 0, 0.2,
-         0, 1, 0, 0.2,
+         1, 0, 0, 0,
+         0, 1, 0, 0,
          0, 0, 1, 0,
          0, 0, 0, 1
      );
      Enemy e = Enemy(10, test);
-     gameObjects.push_back(&e);
+     //gameObjects.push_back(&e);
+
+     test = glm::mat4(
+         1, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 1, 0,
+         0, 0, 0, 1
+     );
+
+     for (int i = 0; i < 1; i++) {
+		 Projectile p = Projectile(test, 10);
+		 gameObjects.push_back(&p);
+	 }
+
+	
 
 
      
@@ -426,18 +541,21 @@ void updateAnimationLoop()
     //TODO
     // Make this object oriented -> the matrix has to be different for different objects
     //Analyze User Inputs
-    if (glfwGetKey(window, GLFW_KEY_W)) {
-        y += 0.003f;
+    /*if (glfwGetKey(window, GLFW_KEY_W)) {
+        y += 1;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S)) {
-        y += -0.003f;       
-    }
+        y += -1;       
+    }*/
     if (glfwGetKey(window, GLFW_KEY_D)) {
-        x += 0.003f;
+        x += 1;
     }
     if (glfwGetKey(window, GLFW_KEY_A)) {
-        x += -0.003f;
+        x += -1;
+    }
+	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+		//TODO
     }
     
     mvp_matrix = glm::mat4(

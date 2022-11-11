@@ -39,7 +39,8 @@ public:
     GLuint vertexbuffer_size;
     glm::mat4 translation;
     float speed;
-
+    float radius;
+    bool isActive;
 
 	
     virtual void update(glm::mat4* mvp) = 0;
@@ -215,6 +216,28 @@ public:
         return true;
     }
 
+    std::vector<GameObject*> checkCollisions(std::vector<GameObject*> gameObjects) {
+		std::vector<GameObject*> collidedObjects;
+
+        if (isActive) {
+            for each (GameObject * cur in gameObjects)
+            {
+                if (cur != this) {
+                    float dist = abs(translation[0][3] - cur->translation[0][3] + translation[1][3] - cur->translation[1][3]);
+                    float mindistance = abs(radius + cur->radius);
+                    if (dist < mindistance) {
+                        collidedObjects.push_back(cur);
+                        std::cout << "Collision detected!" << std::endl;
+                    }
+
+
+                }
+            }
+        }
+        
+        return collidedObjects;
+    }
+
 };
 
 
@@ -226,6 +249,8 @@ class Player : public GameObject{
             hitpoints = hp;
             translation = translation_g;
             speed = 0.02f;
+            radius = 0.1f;
+            isActive = true;
         }
         void update  (glm::mat4* mvp) override {
             glm::mat4 finished_mvp = *mvp;
@@ -307,7 +332,7 @@ class Enemy : public GameObject{
     
 
     public:
-        bool isActive;
+        
         glm::vec2 playerposition_enemy;
 
         bool initializeVertexbuffer() override {
@@ -415,6 +440,7 @@ class Enemy : public GameObject{
             translation = translation_g;
             speed = 0.01f;
             isActive = false;
+            radius = 0.05f;
             
         }
         void update(glm::mat4* mvp) override {
@@ -473,12 +499,13 @@ class Projectile : public GameObject{
     
 	
     public:
-        bool isActive;
+        
         Projectile(glm::mat4 translation_g, int dmg) {
             translation = translation_g;
             damage = dmg;
             speed = 0.005f;
             isActive = false;
+            radius = 0.005f;
         }
         void update(glm::mat4* mvp) override {
             translation = translation;
@@ -858,6 +885,39 @@ void updateAnimationLoop()
     }
    
   
+
+	//set up GameObject vectors for enemies and projectiles (horrible code, I know)
+    std::vector<GameObject*> projObjects;
+    for each (Projectile* var in projectiles)
+    {
+        projObjects.push_back(var);
+    }
+	
+    std::vector<GameObject*> enemyObjects;
+    for each (Enemy * var in enemies)
+    {
+        enemyObjects.push_back(var);
+    }
+    
+
+    //TODO: Enemies are able to get hit very easily in x direction -> weird
+	
+	//check collisions for projectiles (only care about enemies)
+    for (int i = 0; i < projectiles.size(); i++) {
+        std::vector<GameObject*> hitEnemies = gameObjects[i]->checkCollisions(enemyObjects);
+        for each (GameObject* var in hitEnemies)
+        {
+            var->isActive = false;
+			freeEnemySpawns++;
+        }
+		
+    }
+
+	
+	
+
+
+	
     
   glDisableVertexAttribArray(1);
 

@@ -22,6 +22,8 @@ using namespace glm;
 #include <cmath>
 
 
+//functions
+
 
 
 //classes
@@ -41,6 +43,7 @@ public:
     float speed;
     float radius;
     bool isActive;
+    
 
 	
     virtual void update(glm::mat4* mvp) = 0;
@@ -662,6 +665,7 @@ float fireCooldown = 300.0f;
 float spawnCooldown = 2000.0f;
 std::chrono::steady_clock::time_point lastFired;
 std::chrono::steady_clock::time_point lastEnemy;
+bool gameOver;
 
 
 
@@ -680,6 +684,7 @@ glm::mat3 myRescale = glm::mat3( 1, 0, 0,
 
 int main( void )
 {
+    gameOver = false;
     x = 0.0;
     y = 0.0;
     freeEnemySpawns = 5;
@@ -806,7 +811,7 @@ int main( void )
 
 	} // Check if the ESC key was pressed or the window was closed
 	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
+		glfwWindowShouldClose(window) == 0 && !gameOver);
 
 	
   //Cleanup and close window
@@ -913,16 +918,7 @@ void updateAnimationLoop()
             }
         }
     }
-   /*
-	//debug
-    for each (Projectile* var in projectiles)
-    {
-		if (var->isActive) {
-			std::cout << "projectile active" << std::endl;
-		}
-    }
-    std::cout << "---------------------" << std::endl;
-  */
+  
 
 	//set up GameObject vectors for enemies and projectiles (horrible code, I know)
     std::vector<GameObject*> projObjects;
@@ -967,18 +963,14 @@ void updateAnimationLoop()
 	
 		if (hitPlayer.size() > 0) {
 			//lost the game
-            std::cout << "you lost!" << std::endl;
+            std::cout << "GAME OVER!" << std::endl;
+            gameOver = true;
+            i = enemies.size();
             
 		}
+		
 	}
-
-	
-
-	
-	
-
-
-	
+		
     
   glDisableVertexAttribArray(1);
 
@@ -987,6 +979,7 @@ void updateAnimationLoop()
   // Swap buffers
   glfwSwapBuffers(window);
   glfwPollEvents();
+  
 }
 
 bool initializeWindow()

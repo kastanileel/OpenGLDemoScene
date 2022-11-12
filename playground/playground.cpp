@@ -216,6 +216,8 @@ public:
         return true;
     }
 
+
+	//detect collisions with other game objects and return all objects that are colliding
     std::vector<GameObject*> checkCollisions(std::vector<GameObject*> gameObjects) {
 		std::vector<GameObject*> collidedObjects;
 
@@ -223,8 +225,12 @@ public:
             for each (GameObject * cur in gameObjects)
             {
                 if (cur != this) {
-                    float dist = abs(translation[0][3] - cur->translation[0][3] + translation[1][3] - cur->translation[1][3]);
-                    float mindistance = abs(radius + cur->radius);
+					float dx = translation[0][3] - cur->translation[0][3];
+					float dy = translation[1][3] - cur->translation[1][3];
+
+					
+                    float dist = sqrt(dx*dx + dy*dy);
+                    float mindistance = radius + cur->radius;
                     if (dist < mindistance) {
                         collidedObjects.push_back(cur);
                         std::cout << "Collision detected!" << std::endl;
@@ -510,26 +516,18 @@ class Projectile : public GameObject{
         void update(glm::mat4* mvp) override {
             translation = translation;
 
-            if (!isActive) {
-                translation = glm::mat4(
-                    1, 0, 0, 10,
-                    0, 1, 0, 10,
-                    0, 0, 1, 0,
-                    0, 0, 0, 1
-
-                );
-            }
+           
 
 
             if (
-                translation[0][3] > 2.0f || translation[0][3] < -2.0f ||
-                translation[1][3] > 2.0f || translation[1][3] < -2.0f
+                (translation[0][3] > 2.0f || translation[0][3] < -2.0f ||
+                translation[1][3] > 2.0f || translation[1][3] < -2.0f) && isActive
                 ) {
-                isActive = false;
+                deactivate();
+                return;
             }
 
             if (isActive) {
-                //translation[0][3] = translation[0][3] + speed;
                 translation[1][3] = translation[1][3] + speed;
             }
 			
@@ -623,6 +621,24 @@ class Projectile : public GameObject{
 
             return true;
         }
+
+        void deactivate() {
+            isActive = false;
+            translation = glm::mat4(
+               1, 0, 0, 10,
+               0, 1, 0, 10,
+               0, 0, 1, 0,
+               0, 0, 0, 1
+
+            );
+            /*std::cout << "deactivated projectile" << std::endl;
+            std::cout << translation[0][3] << std::endl;
+            std::cout << translation[1][3] << std::endl;*/
+            draw(1.0f);
+			
+				
+            
+        }
 };
 
 
@@ -696,8 +712,8 @@ int main( void )
 
 	
      test = glm::mat4(
-         1, 0, 0, 0,
-         0, 1, 0, 0,
+         1, 0, 0, 10,
+         0, 1, 0, 10,
          0, 0, 1, 0,
          0, 0, 0, 1
      );
@@ -817,13 +833,17 @@ void updateAnimationLoop()
 	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
 		//for all projectiles
         for (int i = 0; i < projectiles.size(); i++) {
+			//if cooldown is over
             if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastFired).count()) > fireCooldown) {
+				
+				//if projectile is not active
                 if (projectiles[i]->isActive != true) {
                     projectiles[i]->isActive = true;
                     projectiles[i]->translation = players[0]->translation;
                     lastFired = std::chrono::steady_clock::now();
 
-                    break;
+					//very ugly "break" but it should work
+					i = projectiles.size();
                 }
             }
             
@@ -834,15 +854,15 @@ void updateAnimationLoop()
 
     //spawn an enemy if there are less than maximum and spawning is not on cooldown
 	if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastEnemy).count()) > spawnCooldown) {
-        std::cout << "spawn cooldown over" <<std::endl;
+        //std::cout << "spawn cooldown over" <<std::endl;
 		if (freeEnemySpawns > 0) {
             
 			//for all enemies check if they are inactive, take first inactive one
 			for (int i = 0; i < enemies.size(); i++) {
-                std::cout << "in the loop. Checking i= " << i << std::endl;
-				std::cout << enemies[i]->isActive << std::endl;
+                //std::cout << "in the loop. Checking i= " << i << std::endl;
+				//std::cout << enemies[i]->isActive << std::endl;
 				if (enemies[i]->isActive != true) {
-					std::cout << "found inactive enemy" << std::endl;
+					//std::cout << "found inactive enemy" << std::endl;
 					enemies[i]->isActive = true;
                     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					
@@ -853,7 +873,7 @@ void updateAnimationLoop()
 						0, 0, 0, 1
 					);
 					lastEnemy = std::chrono::steady_clock::now();
-					std::cout << "enemy spawned. x: "<< r << std::endl;
+					//std::cout << "enemy spawned. x: "<< r << std::endl;
 					freeEnemySpawns--;
 					break;
 				}
@@ -894,9 +914,15 @@ void updateAnimationLoop()
     }
 	
     std::vector<GameObject*> enemyObjects;
-    for each (Enemy * var in enemies)
+    for each (Enemy* var in enemies)
     {
         enemyObjects.push_back(var);
+    }
+
+    std::vector<GameObject*> playerObjects;
+    for each (Player* var in players)
+    {
+        playerObjects.push_back(var);
     }
     
 
@@ -904,14 +930,31 @@ void updateAnimationLoop()
 	
 	//check collisions for projectiles (only care about enemies)
     for (int i = 0; i < projectiles.size(); i++) {
-        std::vector<GameObject*> hitEnemies = gameObjects[i]->checkCollisions(enemyObjects);
+        std::vector<GameObject*> hitEnemies = projectiles[i]->checkCollisions(enemyObjects);
         for each (GameObject* var in hitEnemies)
         {
             var->isActive = false;
 			freeEnemySpawns++;
         }
+        if (hitEnemies.size() > 0) {
+            projectiles[i]->deactivate();
+			
+        }
 		
     }
+
+	//check collisions for enemies (only care about player)
+	for (int i = 0; i < enemies.size(); i++) {
+		std::vector<GameObject*> hitPlayer = enemies[i]->checkCollisions(playerObjects);
+	
+		if (hitPlayer.size() > 0) {
+			//lost the game
+            std::cout << "you lost!" << std::endl;
+            
+		}
+	}
+
+	
 
 	
 	

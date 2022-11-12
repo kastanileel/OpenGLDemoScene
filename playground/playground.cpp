@@ -665,6 +665,7 @@ float fireCooldown = 300.0f;
 float spawnCooldown = 2000.0f;
 std::chrono::steady_clock::time_point lastFired;
 std::chrono::steady_clock::time_point lastEnemy;
+std::chrono::steady_clock::time_point lastUpdate;
 bool gameOver;
 
 
@@ -690,7 +691,7 @@ int main( void )
     freeEnemySpawns = 5;
 	lastFired = std::chrono::steady_clock::now();
 	lastEnemy = std::chrono::steady_clock::now();
-
+    lastUpdate = std::chrono::steady_clock::now();
 	
     glm::mat4 test = glm::mat4(
         1, 0, 0, 0,
@@ -806,12 +807,19 @@ int main( void )
 
 	//start animation loop until escape key is pressed
 	do{
-
-    updateAnimationLoop();
+        if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastUpdate).count()) > 1) {
+            lastUpdate = std::chrono::steady_clock::now();
+            updateAnimationLoop();
+        }
+		
 
 	} // Check if the ESC key was pressed or the window was closed
 	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		glfwWindowShouldClose(window) == 0 && !gameOver);
+		glfwWindowShouldClose(window) == 0 && !gameOver
+        
+        
+        
+        );
 
 	
   //Cleanup and close window

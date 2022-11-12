@@ -233,7 +233,7 @@ public:
                     float mindistance = radius + cur->radius;
                     if (dist < mindistance) {
                         collidedObjects.push_back(cur);
-                        std::cout << "Collision detected!" << std::endl;
+                        //std::cout << "Collision detected!" << std::endl;
                     }
 
 
@@ -446,7 +446,7 @@ class Enemy : public GameObject{
             translation = translation_g;
             speed = 0.01f;
             isActive = false;
-            radius = 0.05f;
+            radius = 0.1f;
             
         }
         void update(glm::mat4* mvp) override {
@@ -478,7 +478,7 @@ class Enemy : public GameObject{
                 translation[0][3] = translation[0][3] + (playerposition_enemy[0] - translation[0][3]) * speed;
 				
                 if (translation[1][3] > playerposition_enemy[1]) {
-                    translation[1][3] = translation[1][3] - speed / 30;
+                    translation[1][3] = translation[1][3] - speed ;
                     //std::cout << "moving to: y= " << playerposition_enemy[1] << std::endl;
                 }
 				//std::cout << "moving to: x= " << playerposition_enemy[0] << std::endl;
@@ -509,7 +509,7 @@ class Projectile : public GameObject{
         Projectile(glm::mat4 translation_g, int dmg) {
             translation = translation_g;
             damage = dmg;
-            speed = 0.005f;
+            speed = 0.01f;
             isActive = false;
             radius = 0.005f;
         }
@@ -644,7 +644,7 @@ class Projectile : public GameObject{
 
 
 
-//global variable
+//global variables
 std::vector<GameObject*> gameObjects;
 std::vector<Enemy*> enemies;
 std::vector<Projectile*> projectiles;
@@ -658,7 +658,7 @@ float x, y;
 bool playerLives;
 int freeEnemySpawns;
 
-float fireCooldown = 1000.0f;
+float fireCooldown = 300.0f;
 float spawnCooldown = 2000.0f;
 std::chrono::steady_clock::time_point lastFired;
 std::chrono::steady_clock::time_point lastEnemy;
@@ -722,7 +722,7 @@ int main( void )
       
 
      
-     
+     //don't ask pls
 
      Projectile pr1 = Projectile(test, 10);
      gameObjects.push_back(&pr1);
@@ -743,6 +743,14 @@ int main( void )
      Projectile pr5 = Projectile(test, 10);
      gameObjects.push_back(&pr5);
      projectiles.push_back(&pr5);
+
+     Projectile pr6 = Projectile(test, 10);
+     gameObjects.push_back(&pr6);
+     projectiles.push_back(&pr6);
+
+     Projectile pr7 = Projectile(test, 10);
+     gameObjects.push_back(&pr7);
+     projectiles.push_back(&pr7);
 
     
 
@@ -831,24 +839,26 @@ void updateAnimationLoop()
 
 	//spawn a projectile if shooting is not on cooldown
 	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
-		//for all projectiles
-        for (int i = 0; i < projectiles.size(); i++) {
-			//if cooldown is over
-            if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastFired).count()) > fireCooldown) {
+        if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastFired).count()) > fireCooldown) {
+            //std::cout << "spawn cooldown over" << std::endl;
+            for (int i = 0; i < projectiles.size(); i++) {
+                //std::cout << "in the loop. Checking i= " << i << std::endl;
+                //std::cout << enemies[i]->isActive << std::endl;
+               
+				if (projectiles[i]->isActive == false) {
+                    //std::cout << "found inactive projectile" << std::endl;
+					projectiles[i]->isActive = true;
 				
-				//if projectile is not active
-                if (projectiles[i]->isActive != true) {
-                    projectiles[i]->isActive = true;
-                    projectiles[i]->translation = players[0]->translation;
-                    lastFired = std::chrono::steady_clock::now();
-
-					//very ugly "break" but it should work
+					projectiles[i]->translation[0][3] = playerPos.x;
+					projectiles[i]->translation[1][3] = playerPos.y;
+					lastFired = std::chrono::steady_clock::now();
+					//std::cout << "projectile spawned" << std::endl;
 					i = projectiles.size();
-                }
+				}
             }
-            
-						
         }
+	
+		
 		
     }
 
@@ -903,8 +913,16 @@ void updateAnimationLoop()
             }
         }
     }
-   
-  
+   /*
+	//debug
+    for each (Projectile* var in projectiles)
+    {
+		if (var->isActive) {
+			std::cout << "projectile active" << std::endl;
+		}
+    }
+    std::cout << "---------------------" << std::endl;
+  */
 
 	//set up GameObject vectors for enemies and projectiles (horrible code, I know)
     std::vector<GameObject*> projObjects;

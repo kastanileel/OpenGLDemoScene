@@ -807,7 +807,7 @@ int main( void )
 
 	//start animation loop until escape key is pressed
 	do{
-        if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastUpdate).count()) > 1) {
+        if ((std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastUpdate).count()) > 5) {
             lastUpdate = std::chrono::steady_clock::now();
             updateAnimationLoop();
         }
@@ -844,10 +844,16 @@ void updateAnimationLoop()
    
 	//Analyzing User Input
     if (glfwGetKey(window, GLFW_KEY_D)) {
-        x += 1;
+        if (players[0]->translation[0][3] < 1.0f) {
+            x += 1;
+        }
+	
+        
     }
     if (glfwGetKey(window, GLFW_KEY_A)) {
-        x += -1;
+        if (players[0]->translation[0][3] > -1.0f) {
+            x += -1;
+        }
     }
 
 	//spawn a projectile if shooting is not on cooldown

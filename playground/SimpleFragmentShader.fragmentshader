@@ -1,15 +1,14 @@
 #version 330 core
 
-//get current color
-in vec3 colorVertex;
-
 // Ouput data
-out vec3 colorOut;
+out vec3 color;
+
+in vec3 fragmentColor;
 
 void main()
 {
-	
-	// Take color from Vertex Shader
-	colorOut = colorVertex;
+
+	// Output color = red 
+	color = fragmentColor;
 
 }

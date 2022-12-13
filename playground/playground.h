@@ -12,6 +12,9 @@ GLuint vertexbuffer;
 GLuint VertexArrayID;
 GLuint vertexbuffer_size;
 
+GLuint colorbuffer;
+
+
 //program ID of the shaders, required for handling the shaders with OpenGL
 GLuint programID;
 
@@ -31,5 +34,7 @@ bool initializeMVPTransformation();
 bool initializeVertexbuffer(); //<<< initializes the vertex buffer array and binds it OpenGL
 bool cleanupVertexbuffer(); //<<< frees all recources from the vertex buffer
 bool closeWindow(); //<<< Closes the OpenGL window and terminates GLFW
+bool initializeColorbuffer();
+bool cleanupColorbuffer();
 
 #endif

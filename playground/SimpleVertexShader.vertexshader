@@ -3,6 +3,9 @@
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPosition_modelspace;
 
+// Input color data
+layout(location = 1) in vec3 colorIn;
+
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
 
@@ -16,18 +19,8 @@ void main(){
 	vec4 lightOrigin = vec4(0.0,2.0,0.0,1.0);
 	vec4 position = vec4(vertexPosition_modelspace,1.0);
 	float distance = distance(lightOrigin,gl_Position);
-	float factor = 0.04f;
-	fragmentColor = vec3(factor*distance,factor*distance,factor*distance);
+	float factor = 0.04f * distance;
+	fragmentColor = vec3(factor*colorIn.x,factor*colorIn.y,factor*colorIn.z);
 	
-	
-	//simple lighting model
-/*	vec3 lightDir = vec3(0.0,0.0,1.0);
-	vec3 normal = vec3(0.0,0.0,1.0);
-	float diffuse = max(dot(normal,lightDir),0.0);
-	fragmentColor = vec3(diffuse,diffuse,diffuse);
-		
-*/
-	
-    
     
 }

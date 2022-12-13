@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Include random
+#include <random>
+
 // Include GLFW
 #include <glfw3.h>
 GLFWwindow* window;
@@ -22,6 +25,7 @@ int main(void)
 
     //Initialize vertex buffer
     bool vertexbufferInitialized = initializeVertexbuffer();
+    vertexbufferInitialized = initializeColorbuffer();
     if (!vertexbufferInitialized) return -1;
 
     glEnable(GL_DEPTH_TEST);
@@ -45,6 +49,7 @@ int main(void)
 
 
     //Cleanup and close window
+    cleanupColorbuffer();
     cleanupVertexbuffer();
     glDeleteProgram(programID);
     closeWindow();
@@ -81,6 +86,17 @@ void updateAnimationLoop()
         GL_FALSE,           // normalized?
         0,                  // stride
         (void*)0            // array buffer offset
+    );
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glVertexAttribPointer(
+        1,
+        3,
+        GL_FLOAT,
+        GL_FALSE,
+        0,
+        (void*)0
     );
 
     // Draw the triangle !
@@ -220,6 +236,65 @@ bool initializeVertexbuffer()
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
+    return true;
+}
+
+bool initializeColorbuffer() {
+    
+    static GLfloat g_color_buffer_data[108];
+	//iterate through g_color_buffer_data and set the color values
+	for (int i = 0; i < 108; i += 3) {
+		//switch between six random cases
+		// each case colors the vertices of a face of the cube diffrently
+		// possible colors should be red, yellow, green, blue, magenta, cyan
+        switch (rand() % 5) {
+        case 0:
+            g_color_buffer_data[i] = 1.0f;
+            g_color_buffer_data[i + 1] = 0.0f;
+            g_color_buffer_data[i + 2] = 0.0f;
+            break;
+        case 1:
+            g_color_buffer_data[i] = 1.0f;
+            g_color_buffer_data[i + 1] = 1.0f;
+            g_color_buffer_data[i + 2] = 0.0f;
+            break;
+        case 2:
+            g_color_buffer_data[i] = 0.0f;
+            g_color_buffer_data[i + 1] = 1.0f;
+            g_color_buffer_data[i + 2] = 0.0f;
+            break;
+        case 3:
+            g_color_buffer_data[i] = 0.0f;
+            g_color_buffer_data[i + 1] = 1.0f;
+            g_color_buffer_data[i + 2] = 1.0f;
+            break;
+        case 4:
+            g_color_buffer_data[i] = 0.0f;
+            g_color_buffer_data[i + 1] = 0.0f;
+            g_color_buffer_data[i + 2] = 1.0f;
+            break;
+        case 5:
+            g_color_buffer_data[i] = 1.0f;
+            g_color_buffer_data[i + 1] = 0.0f;
+            g_color_buffer_data[i + 2] = 1.0f;
+            break;
+        }
+	}
+
+
+
+    glDeleteBuffers(1, &colorbuffer);
+    glGenBuffers(1, &colorbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+
+
+    return true;
+}
+
+bool cleanupColorbuffer() {
+	glDeleteBuffers(1, &colorbuffer);
     return true;
 }
 

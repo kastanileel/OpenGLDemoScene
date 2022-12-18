@@ -55,6 +55,8 @@ add_definitions(
 
 # User playground
 add_executable(playground 
+	playground/parse_stl.cpp
+	playground/parse_stl.h
 	playground/playground.cpp
 	playground/playground.h
 	playground/SimpleFragmentShader.fragmentshader

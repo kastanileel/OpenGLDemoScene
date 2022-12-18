@@ -37,7 +37,7 @@ int main(void)
     initializeMVPTransformation();
 
     curr_x = 0;
-    curr_y = 0;
+    curr_y = -10.0f;
 
     //start animation loop until escape key is pressed
     do {
@@ -199,7 +199,7 @@ bool initializeMVPTransformation()
     //glm::mat4 Projection = glm::frustum(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f);
     // Camera matrix
     glm::mat4 View = glm::lookAt(
-        glm::vec3(16, 40, -20), // Camera is at (4,3,-3), in World Space
+        glm::vec3(32, 80, -40), // Camera is at (4,3,-3), in World Space
         glm::vec3(0, 0, 0), // and looks at the origin
         glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
     );

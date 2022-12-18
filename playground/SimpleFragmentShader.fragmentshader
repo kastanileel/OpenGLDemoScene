@@ -3,12 +3,12 @@
 // Ouput data
 out vec3 color;
 
-in vec3 fragmentColor;
+in vec3 fColor;
 
 void main()
 {
 
 	// Output color = red 
-	color = fragmentColor;
+	color = fColor;
 
 }

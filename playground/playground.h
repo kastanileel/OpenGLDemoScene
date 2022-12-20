@@ -26,6 +26,7 @@ glm::mat4 M;
 
 float curr_x;
 float curr_y;
+float curr_z;
 float curr_angle;
 
 

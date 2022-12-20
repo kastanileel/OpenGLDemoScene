@@ -1,6 +1,7 @@
 #version 330 core
 
 // Ouput data
+out vec4 fragColor;
 
 in vec3 fColor;
 in vec3 fNormal;
@@ -19,9 +20,10 @@ void main()
 	vec3 cameraToFragN = normalize(cameraToFrag);
 	
 	float outlineDotProduct = dot(cameraToFragN, fNormal);
-	lightedCol = vec3(1,1,1);
-	vec3 outlineCol = vec3(1.0, 0.0, 0.0);
+	//lightedCol = vec3(1,1,1);
+	vec3 outlineCol = vec3(1.0, 1.0, 1.0);
 
+	
 	
 	
 	/*if(outlineDotProduct > 0.3)
@@ -29,8 +31,8 @@ void main()
 	else
 		outlineDotProduct = 0.0;*/
 
-	gl_FragColor = vec4(lightedCol * outlineDotProduct + outlineCol * (1 - outlineDotProduct), 1);	
+	fragColor = vec4(lightedCol * outlineDotProduct + outlineCol * (1 - outlineDotProduct), 1);	
 
-	//gl_FragColor = vec4(outlineCol, 1);
+	//fragColor = vec4(outlineCol, 1);
 
 }

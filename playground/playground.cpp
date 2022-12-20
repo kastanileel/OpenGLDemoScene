@@ -38,6 +38,7 @@ int main(void)
 
     curr_x = 0;
     curr_y = -10.0f;
+    curr_z = 0;
 
     //start animation loop until escape key is pressed
     do {
@@ -95,6 +96,9 @@ void updateAnimationLoop()
     else if (glfwGetKey(window, GLFW_KEY_S)) curr_y -= 0.11;
     else if (glfwGetKey(window, GLFW_KEY_A)) curr_x -= 0.11;
     else if (glfwGetKey(window, GLFW_KEY_D)) curr_x += 0.11;
+
+    else if (glfwGetKey(window, GLFW_KEY_Z)) curr_z -= 0.11;
+    else if (glfwGetKey(window, GLFW_KEY_T)) curr_z += 0.11;
     else if (glfwGetKey(window, GLFW_KEY_R)) curr_angle += 0.01;
     initializeMVPTransformation();
 
@@ -211,7 +215,7 @@ bool initializeMVPTransformation()
     glm::mat4 transformation;//additional transformation for the model
     transformation[0][0] = 1.0; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
     transformation[0][1] = 0.0; transformation[1][1] = 1.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
-    transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = 0.0;
+    transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = curr_z;
     transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
 
     // Our ModelViewProjection : multiplication of our 3 matrices

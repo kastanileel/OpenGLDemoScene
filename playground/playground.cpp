@@ -101,7 +101,7 @@ void updateAnimationLoop()
     // Send our transformation to the currently bound shader, 
     // in the "MVP" uniform
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(MatrixIDMV, 1, GL_FALSE, &MV[0][0]);
+    glUniformMatrix4fv(MatrixIDM, 1, GL_FALSE, &M[0][0]);
 
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
@@ -191,7 +191,7 @@ bool initializeMVPTransformation()
     GLuint MatrixIDnew = glGetUniformLocation(programID, "MVP");
     MatrixID = MatrixIDnew;
 
-    MatrixIDMV = glGetUniformLocation(programID, "MV");
+    MatrixIDM = glGetUniformLocation(programID, "M");
 
 
     // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
@@ -216,7 +216,7 @@ bool initializeMVPTransformation()
 
     // Our ModelViewProjection : multiplication of our 3 matrices
     MVP = Projection * View * Model * transformation; // Remember, matrix multiplication is the other way around
-	MV = View * Model;
+	M = Model * transformation;
 
     return true;
 

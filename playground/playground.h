@@ -20,9 +20,9 @@ GLuint programID;
 
 //global variables to handle the MVP matrix
 GLuint MatrixID;
-GLuint MatrixIDMV;
+GLuint MatrixIDM;
 glm::mat4 MVP;
-glm::mat4 MV;
+glm::mat4 M;
 
 float curr_x;
 float curr_y;

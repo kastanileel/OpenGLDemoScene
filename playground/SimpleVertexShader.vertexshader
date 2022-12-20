@@ -5,18 +5,24 @@ layout(location = 1) in vec3 vertexNormal_modelspace;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
+uniform mat4 M;
 //Output variables
 out vec3 fColor;
+out vec3 fNormal;
+out vec3 fCameraPos;
+out vec3 fLightDir;
+out vec4 fPosition;
 
 void main(){
 
-	vec3 lightDir = vec3(1,0,0);
-	
-	float dotProduct = dot(vertexNormal_modelspace, lightDir);
-	fColor = vec3(1.0 - dotProduct,1.0 - dotProduct,1.0 - dotProduct);
+	fLightDir = vec3(1,0,0);
+	fNormal = normalize(vertexNormal_modelspace);
+	fColor = vec3(1, 1, 1);
+	fCameraPos = vec3(32, 80, -40);
 	
 	gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
 	
+	fPosition = M * vec4(vertexPosition_modelspace,1);
 	
 }
 

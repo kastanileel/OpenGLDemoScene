@@ -1,4 +1,4 @@
-#version 330 core
+/*#version 330 core
 
 // Ouput data
 out vec4 fragColor;
@@ -25,14 +25,50 @@ void main()
 
 	
 	
-	
+	*/
 	/*if(outlineDotProduct > 0.3)
 		outlineDotProduct = 1.0;
 	else
 		outlineDotProduct = 0.0;*/
 
-	fragColor = vec4(lightedCol * outlineDotProduct + outlineCol * (1 - outlineDotProduct), 1);	
+	/*fragColor = vec4(lightedCol * outlineDotProduct + outlineCol * (1 - outlineDotProduct), 1);	
 
 	//fragColor = vec4(outlineCol, 1);
 
+}*/
+
+
+
+
+
+
+#version 450 core
+
+// Ouput data
+out vec4 fragColor;
+
+in vec2 UV;
+uniform sampler2D myTextureSampler;
+uniform float time;
+
+void main()
+{
+// Output color = red
+	vec2 iResolution = vec2(1920, 1080);
+	
+	vec2 uv = gl_FragCoord.xy/iResolution;
+	// center uv
+	uv -= 0.5;
+
+	float a = atan(uv.y, uv.x);
+	float r = length(uv);
+
+	vec2 st = vec2(a/0.3, 0.5/r) + 0.5*time;
+
+	vec3 color = texture(myTextureSampler, st).rgb;
+
+	color *= 3.5*r;
+	
+	fragColor = vec4(color,1);
+	//fragColor = vec4(1,1,1,1);
 }

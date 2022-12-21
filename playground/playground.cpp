@@ -17,6 +17,9 @@ using namespace glm;
 #include <common/shader.hpp>
 #include "parse_stl.h"
 
+//include time
+#include <time.h>
+
 
 int main(void)
 {
@@ -25,9 +28,10 @@ int main(void)
     if (!windowInitialized) return -1;
 
     //Initialize vertex buffer
-    bool vertexbufferInitialized = initializeVertexbuffer();
-    if (!vertexbufferInitialized) return -1;
+   // bool vertexbufferInitialized = initializeVertexbuffer();
+    //if (!vertexbufferInitialized) return -1;
     
+	textureTest();
 
     glEnable(GL_DEPTH_TEST);
 
@@ -37,7 +41,7 @@ int main(void)
     initializeMVPTransformation();
 
     curr_x = 0;
-    curr_y = -10.0f;
+    curr_y = 0;
     curr_z = 0;
 
     //start animation loop until escape key is pressed
@@ -86,16 +90,20 @@ void parseStl(std::vector< glm::vec3 >& vertices,
 
 void updateAnimationLoop()
 {
+    // set variable time to current time in miliseconds
+	curr_time = (float)glfwGetTime();
+    
+    
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Use our shader
     glUseProgram(programID);
 
-    if (glfwGetKey(window, GLFW_KEY_W)) curr_y += 0.11;
-    else if (glfwGetKey(window, GLFW_KEY_S)) curr_y -= 0.11;
-    else if (glfwGetKey(window, GLFW_KEY_A)) curr_x -= 0.11;
-    else if (glfwGetKey(window, GLFW_KEY_D)) curr_x += 0.11;
+    if (glfwGetKey(window, GLFW_KEY_W)) curr_y += 0.011;
+    else if (glfwGetKey(window, GLFW_KEY_S)) curr_y -= 0.011;
+    else if (glfwGetKey(window, GLFW_KEY_A)) curr_x -= 0.011;
+    else if (glfwGetKey(window, GLFW_KEY_D)) curr_x += 0.011;
 
     else if (glfwGetKey(window, GLFW_KEY_Z)) curr_z -= 0.11;
     else if (glfwGetKey(window, GLFW_KEY_T)) curr_z += 0.11;
@@ -107,6 +115,10 @@ void updateAnimationLoop()
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
     glUniformMatrix4fv(MatrixIDM, 1, GL_FALSE, &M[0][0]);
 
+    // send time as uniform to shader
+	glUniform1f(timeID, curr_time);
+
+    /*
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[0]);
@@ -132,11 +144,42 @@ void updateAnimationLoop()
     );
 
 
+    */
+    
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer1D);
+    glVertexAttribPointer(
+        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+ 
+    
+    
 
-
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glUniform1i(textureSampler2D, 0);
+    
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glVertexAttribPointer(
+        2,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        2,  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
 
     // Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size * 3); // 3 indices starting at 0 -> 1 triangle
+    
+
+    glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle
+    //glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size * 3); // 3 indices starting at 0 -> 1 triangle
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
@@ -163,7 +206,9 @@ bool initializeWindow()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Open a window and create its OpenGL context
-    window = glfwCreateWindow(1024, 768, "Demo: Cube", NULL, NULL);
+    width = 1920;
+	height = 1080;
+    window = glfwCreateWindow(width, height, "Demo: Cube", NULL, NULL);
     if (window == NULL) {
         fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
         getchar();
@@ -189,6 +234,87 @@ bool initializeWindow()
     return true;
 }
 
+void textureTest() {
+    glGenVertexArrays(1, &VertexArrayID);
+    glBindVertexArray(VertexArrayID);
+
+    vertexbuffer_size = 6;
+
+    glm::vec2 triangleVertice1 = glm::vec2(0.0f, 0.0f);
+    glm::vec2 triangleVertice2 = glm::vec2(0.0f, 1.0f);
+    glm::vec2 triangleVertice3 = glm::vec2(1.0f, 1.0f);
+
+    glm::vec2 secTriangleVertice1 = glm::vec2(0.0f, 0.0f);
+    glm::vec2 secTriangleVertice2 = glm::vec2(1.0f, 1.0f);
+    glm::vec2 secTriangleVertice3 = glm::vec2(1.0f, 0.0f);
+
+    static GLfloat g_vertex_buffer_data[18];
+    g_vertex_buffer_data[0] = triangleVertice1[0];
+    g_vertex_buffer_data[1] = triangleVertice1[1];
+    g_vertex_buffer_data[2] = 0.0f;
+    g_vertex_buffer_data[3] = triangleVertice2[0];
+    g_vertex_buffer_data[4] = triangleVertice2[1];
+    g_vertex_buffer_data[5] = 0.0f;
+    g_vertex_buffer_data[6] = triangleVertice3[0];
+    g_vertex_buffer_data[7] = triangleVertice3[1];
+    g_vertex_buffer_data[8] = 0.0f;
+    g_vertex_buffer_data[9] = secTriangleVertice1[0];
+    g_vertex_buffer_data[10] = secTriangleVertice1[1];
+    g_vertex_buffer_data[11] = 0.0f;
+    g_vertex_buffer_data[12] = secTriangleVertice2[0];
+    g_vertex_buffer_data[13] = secTriangleVertice2[1];
+    g_vertex_buffer_data[14] = 0.0f;
+    g_vertex_buffer_data[15] = secTriangleVertice3[0];
+    g_vertex_buffer_data[16] = secTriangleVertice3[1];
+    g_vertex_buffer_data[17] = 0.0f;
+
+    glGenBuffers(1, &vertexBuffer1D);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer1D);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+
+
+    textureSampler2D = glGetUniformLocation(programID, "myTextureSampler");
+
+    static const GLfloat g_uv_buffer_date[] = {
+        0.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 1.0f,
+        1.0f, 0.0f
+    };
+
+    glGenBuffers(1, &uvbuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_date), g_uv_buffer_date, GL_STATIC_DRAW);
+
+    static const GLubyte checkerboard_tex[] = {
+       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
+       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
+       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
+       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
+       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF
+    };
+
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTextureStorage2D(texID, 4, GL_R8, 8, 8);
+    glTextureSubImage2D(texID,
+        0,
+        0, 0,
+        8, 8,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        checkerboard_tex
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+}
+
 bool initializeMVPTransformation()
 {
     // Get a handle for our "MVP" uniform
@@ -197,13 +323,15 @@ bool initializeMVPTransformation()
 
     MatrixIDM = glGetUniformLocation(programID, "M");
 
+	timeID = glGetUniformLocation(programID, "time");
+
 
     // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
     glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 500.0f);
     //glm::mat4 Projection = glm::frustum(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f);
     // Camera matrix
     glm::mat4 View = glm::lookAt(
-        glm::vec3(32, 80, -40), // Camera is at (4,3,-3), in World Space
+        glm::vec3(0, 0, 2), // Camera is at (4,3,-3), in World Space
         glm::vec3(0, 0, 0), // and looks at the origin
         glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
@@ -213,14 +341,14 @@ bool initializeMVPTransformation()
     Model = glm::rotate(Model, curr_angle, glm::vec3(0.0f, 1.0f, 1.0f));
 
     glm::mat4 transformation;//additional transformation for the model
-    transformation[0][0] = 1.0; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
+    transformation[0][0] = 1; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
     transformation[0][1] = 0.0; transformation[1][1] = 1.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
     transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = curr_z;
     transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
 
     // Our ModelViewProjection : multiplication of our 3 matrices
-    MVP = Projection * View * Model * transformation; // Remember, matrix multiplication is the other way around
-	M = Model * transformation;
+    MVP = Projection * View * transformation * Model; // Remember, matrix multiplication is the other way around
+	M =  transformation * Model;
 
     return true;
 
@@ -234,7 +362,7 @@ bool initializeVertexbuffer()
     //create vertex and normal data
     std::vector< glm::vec3 > vertices = std::vector< glm::vec3 >();
     std::vector< glm::vec3 > normals = std::vector< glm::vec3 >();
-    parseStl(vertices, normals, "../stlFiles/bunny-decimated.stl");
+    parseStl(vertices, normals, "../stlFiles/monke.stl");
     vertexbuffer_size = vertices.size() * sizeof(glm::vec3);
 
     // print normals to console

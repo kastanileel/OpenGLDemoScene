@@ -15,6 +15,8 @@ GLuint colorbuffer;
 GLuint VertexArrayID;
 GLuint vertexbuffer_size;
 
+GLuint vertexBuffer1D;
+
 //program ID of the shaders, required for handling the shaders with OpenGL
 GLuint programID;
 
@@ -24,11 +26,20 @@ GLuint MatrixIDM;
 glm::mat4 MVP;
 glm::mat4 M;
 
+float width, height;
+
 float curr_x;
 float curr_y;
 float curr_z;
 float curr_angle;
 
+//time as float
+float curr_time;
+GLuint timeID;
+
+GLuint texID;
+GLuint uvbuffer;
+GLuint textureSampler2D;
 
 int main(void); //<<< main function, called at startup
 void updateAnimationLoop(); //<<< updates the animation loop
@@ -41,5 +52,7 @@ bool initializeColorbuffer(); //<<< initializes the vertex buffer array and bind
 bool cleanupVertexbuffer(); //<<< frees all recources from the vertex buffer
 bool cleanupColorbuffer(); //<<< frees all recources from the vertex buffer
 bool closeWindow(); //<<< Closes the OpenGL window and terminates GLFW
+
+void textureTest();
 
 #endif

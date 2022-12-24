@@ -121,6 +121,14 @@ void main()
 	fragColor = vec4(color,1);
 	
 	
+
+
+
+	
+
+}
+
+/*
 float grid(vec2 uv, float battery)
 {
     vec2 size = vec2(uv.y, uv.y * uv.y * 0.2) * 0.01;
@@ -139,11 +147,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     {
         //default setting
         vec3 col = vec3(0.0, 0.1, 0.2);
-        if (uv.y < -0.4f)
+        if (uv.y < -0.2f)
         {
             uv.y = 5.0 / (abs(uv.y + 0.2) + 0.05);
             uv.x *= uv.y * 1.0;
-            float gridVal = cos(iTime);
+            float gridVal = grid(uv, battery);
             col = mix(col, vec3(1.0, 0.5, 1.0), gridVal);
         }
         
@@ -155,8 +163,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
     
 }
-
-
-	
-
-}
+*/

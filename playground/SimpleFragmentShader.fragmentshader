@@ -41,7 +41,7 @@ void main()
 
 
 
-
+/*
 #version 450 core
 
 // Ouput data
@@ -60,15 +60,103 @@ void main()
 	// center uv
 	uv -= 0.5;
 
-	float a = atan(uv.y, uv.x);
+	float a = atan(uv.y/ uv.x);
 	float r = length(uv);
 
-	vec2 st = vec2(a/0.3, 0.5/r) + 0.5*time;
+
+
+	vec2 st = vec2(a/0.3, 0.5/r);
+	
+	st.x += + 0.5*time;
+	st.y += + 0.2*time;
 
 	vec3 color = texture(myTextureSampler, st).rgb;
 
 	color *= 3.5*r;
 	
-	fragColor = vec4(color,1);
+	fragColor = vec4(color,0.1);
 	//fragColor = vec4(1,1,1,1);
+
+}
+*/
+
+
+#version 450 core
+
+// Ouput data
+out vec4 fragColor;
+
+in vec2 UV;
+uniform float time;
+
+void main()
+{
+// Output color = red
+	vec2 iResolution = vec2(1920, 1080);
+	
+	vec2 uv = gl_FragCoord.xy/iResolution;
+	uv.y += 0.2 * time;
+	// center uv
+	
+	vec3 color = vec3(0,0,0);
+	
+	float squareSize = 0.2;
+	int squareSizeInt = int(squareSize * 100);
+	int x =int( uv.x * 100.0);
+	int y =int( uv.y * 100.0);
+	if(x%squareSizeInt == 0 )
+		color += vec3(0.5,0,0);
+		
+	if(y%squareSizeInt == 0 )
+		color += vec3(0.5,0,0);
+		
+	vec2 lightPos = vec2(0.5, 1);
+
+	
+	color += vec3(1,1,1) / (dist * dist);
+
+	
+	
+
+	fragColor = vec4(color,1);
+	
+	
+float grid(vec2 uv, float battery)
+{
+    vec2 size = vec2(uv.y, uv.y * uv.y * 0.2) * 0.01;
+    uv += vec2(0.0, iTime * 4.0 * (battery + 0.05));
+    uv = abs(fract(uv) - 0.5);
+ 	vec2 lines = smoothstep(size, vec2(0.0), uv);
+ 	lines += smoothstep(size * 5.0, vec2(0.0), uv) * 0.4 * battery;
+    return clamp(lines.x + lines.y, 0.0, 3.0);
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec2 uv = (2.0 * fragCoord.xy - iResolution.xy)/iResolution.xy;
+    float battery = 1.0;
+  
+    {
+        //default setting
+        vec3 col = vec3(0.0, 0.1, 0.2);
+        if (uv.y < -0.4f)
+        {
+            uv.y = 5.0 / (abs(uv.y + 0.2) + 0.05);
+            uv.x *= uv.y * 1.0;
+            float gridVal = cos(iTime);
+            col = mix(col, vec3(1.0, 0.5, 1.0), gridVal);
+        }
+        
+
+        col = mix(vec3(col.r, col.r, col.r) * 0.5, col, battery * 0.7);
+
+        fragColor = vec4(col,1.0);
+    }
+
+    
+}
+
+
+	
+
 }

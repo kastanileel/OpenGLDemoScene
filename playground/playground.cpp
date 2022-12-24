@@ -341,8 +341,8 @@ bool initializeMVPTransformation()
     Model = glm::rotate(Model, curr_angle, glm::vec3(0.0f, 1.0f, 1.0f));
 
     glm::mat4 transformation;//additional transformation for the model
-    transformation[0][0] = 1; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
-    transformation[0][1] = 0.0; transformation[1][1] = 1.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
+    transformation[0][0] = 3; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
+    transformation[0][1] = 0.0; transformation[1][1] = 3.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
     transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = curr_z;
     transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
 

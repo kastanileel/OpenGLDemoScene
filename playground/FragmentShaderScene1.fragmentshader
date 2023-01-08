@@ -1,0 +1,40 @@
+#version 330 core
+
+// Ouput data
+out vec4 fragColor;
+
+in vec3 fColor;
+in vec3 fNormal;
+in vec3 fCameraPos;
+in vec3 fLightDir;
+in vec4 fPosition;
+
+void main()
+{
+
+	// Output color = red
+	float dotProduct = dot(fNormal, fLightDir);
+	vec3 lightedCol = vec3(fColor.x - dotProduct, fColor.y - dotProduct, fColor.z - dotProduct);
+
+	vec3 cameraToFrag = vec3(fCameraPos.x - fPosition.x, fCameraPos.y - fPosition.y, fCameraPos.z - fPosition.z);
+	vec3 cameraToFragN = normalize(cameraToFrag);
+	
+	float outlineDotProduct = dot(cameraToFragN, fNormal);
+	//lightedCol = vec3(1,1,1);
+	vec3 outlineCol = vec3(1.0, 1.0, 1.0);
+
+	
+	
+	/*if(outlineDotProduct > 0.3)
+		outlineDotProduct = 1.0;
+	else
+		outlineDotProduct = 0.0;*/
+
+	fragColor = vec4(lightedCol * outlineDotProduct + outlineCol * (1 - outlineDotProduct), 1);	
+
+	//fragColor = vec4(outlineCol, 1);
+
+}
+
+
+

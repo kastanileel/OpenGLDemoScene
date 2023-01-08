@@ -17,7 +17,11 @@ public:
 	void Draw() override;
 
 private:
-	void initializeBuffers() override;
+	GLuint vaoID;
+	GLuint vertexbuffer[2];
+	GLuint vb_size;
+
+	bool initializeBuffers() override;
 	void cleanupBuffers() override;
 };
 

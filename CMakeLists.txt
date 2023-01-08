@@ -61,6 +61,8 @@ add_executable(playground
 	playground/playground.h
 	playground/SimpleFragmentShader.fragmentshader
 	playground/SimpleVertexShader.vertexshader
+	playground/FragmentShaderScene1.fragmentshader
+	playground/VertexShaderScene1.vertexshader
 	common/shader.cpp
 	common/shader.hpp
 	gameLogic/GameObject.h

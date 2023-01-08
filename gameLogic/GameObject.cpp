@@ -1,17 +1,7 @@
 #include "GameObject.h"
+#include "./playground/parse_stl.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
-#include <glfw3.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <cassert>
-#include "../playground/parse_stl.h"
 
-#include <vector>
-#include <memory>
-#include <random>
 GameObject::GameObject(GLuint shaderProgramID, std::string fileName)
 {
 	this->programID = shaderProgramID;

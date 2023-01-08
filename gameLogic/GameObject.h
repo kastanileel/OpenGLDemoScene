@@ -1,13 +1,10 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
-#include <glfw3.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <cassert>
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <string>
+#include <vector>
 
 class GameObject
 {

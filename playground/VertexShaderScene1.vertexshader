@@ -27,4 +27,3 @@ void main(){
 	fPosition = M * vec4(vertexPosition_modelspace,1);
 	
 }
-

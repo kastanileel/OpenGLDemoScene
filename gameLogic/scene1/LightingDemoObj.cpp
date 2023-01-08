@@ -1,19 +1,5 @@
 #include "LightingDemoObj.h"
-#include "gameLogic/GameObject.h"
-
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
-#include <glfw3.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <cassert>
-#include <glm/glm.hpp>
-#include <GL/glew.h>
 #include <vector>
-
-// Include GLM
-#include <glm/glm.hpp>
 
 void LightingDemoObj::Update(float time)
 {
@@ -37,7 +23,7 @@ void LightingDemoObj::Draw()
         (void*)0            // array buffer offset
     );
 
-    // 3rd attribute buffer : normals
+    // 2nd attribute buffer : normals
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[1]);
     glVertexAttribPointer(

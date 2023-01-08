@@ -24,6 +24,8 @@ using namespace glm;
 //include time
 #include <time.h>
 
+#include "gameLogic/GameObject.h"
+
 
 float applicationStartTimeStamp; //time stamp of application start
 

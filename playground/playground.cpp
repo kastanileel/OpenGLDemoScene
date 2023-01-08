@@ -17,8 +17,15 @@ using namespace glm;
 #include <common/shader.hpp>
 #include "parse_stl.h"
 
+#include <vector>
+#include <memory>
+#include <random>
+
 //include time
 #include <time.h>
+
+
+float applicationStartTimeStamp; //time stamp of application start
 
 
 int main(void)
@@ -27,6 +34,8 @@ int main(void)
     bool windowInitialized = initializeWindow();
     if (!windowInitialized) return -1;
 
+	applicationStartTimeStamp = (float) glfwGetTime();
+    
     //Initialize vertex buffer
    // bool vertexbufferInitialized = initializeVertexbuffer();
     //if (!vertexbufferInitialized) return -1;
@@ -91,7 +100,9 @@ void parseStl(std::vector< glm::vec3 >& vertices,
 void updateAnimationLoop()
 {
     // set variable time to current time in miliseconds
-	curr_time = (float)glfwGetTime();
+	curr_time = (float)glfwGetTime() - applicationStartTimeStamp;
+
+	std::cout << "curr_time: " << curr_time << std::endl;
     
     
     // Clear the screen

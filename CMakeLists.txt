@@ -65,6 +65,8 @@ add_executable(playground
 	common/shader.hpp
 	gameLogic/GameObject.h
 	gameLogic/GameObject.cpp
+	gameLogic/scene1/LightingDemoObj.h
+	gameLogic/scene1/LightingDemoObj.cpp
 )
 target_link_libraries(playground
 	${ALL_LIBS}

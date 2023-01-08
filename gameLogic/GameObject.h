@@ -19,10 +19,10 @@ public:
 	float scale[3];
 	std::string fileName;
 	GLuint programID;
+	virtual void Update(float time) = 0;
+	virtual void Draw() = 0;
 
 private:
-	virtual void Update() = 0;
-	virtual void Draw() = 0;
 	virtual void initializeBuffers() = 0;
 	virtual void cleanupBuffers() = 0;
 };

@@ -5,12 +5,14 @@
 class LightingDemoObj: public GameObject
 {
 public:
+	LightingDemoObj(GLuint shaderProgramID, std::string fileName);
+	~LightingDemoObj();
 	void Update(float time) override;
 	void Draw() override;
 
 private:
 	GLuint vaoID;
-	GLuint vertexbuffer[2];
+	GLuint vbo[2];
 	GLuint vb_size;
 
 	bool initializeBuffers() override;

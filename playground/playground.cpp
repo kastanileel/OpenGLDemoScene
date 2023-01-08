@@ -25,8 +25,10 @@ using namespace glm;
 #include <time.h>
 
 #include "gameLogic/GameObject.h"
+#include "gameLogic/scene1/LightingDemoObj.h"
 
 
+std::vector< std::shared_ptr<GameObject> > gameObjects;
 float applicationStartTimeStamp; //time stamp of application start
 
 
@@ -42,12 +44,17 @@ int main(void)
    // bool vertexbufferInitialized = initializeVertexbuffer();
     //if (!vertexbufferInitialized) return -1;
     
-	textureTest();
+	//textureTest();
 
     glEnable(GL_DEPTH_TEST);
 
     // Create and compile our GLSL program from the shaders
-    programID = LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+    programID = LoadShaders("VertexShaderScene1.vertexshader", "FragmentShaderScene1.fragmentshader");
+
+	std::shared_ptr<GameObject> lightingDemoObj = std::make_shared<LightingDemoObj>(programID, "../stlFiles/monke.stl");
+	gameObjects.push_back(lightingDemoObj);
+
+	
 
     initializeMVPTransformation();
 
@@ -104,7 +111,7 @@ void updateAnimationLoop()
     // set variable time to current time in miliseconds
 	curr_time = (float)glfwGetTime() - applicationStartTimeStamp;
 
-	std::cout << "curr_time: " << curr_time << std::endl;
+	//std::cout << "curr_time: " << curr_time << std::endl;
     
     
     // Clear the screen
@@ -121,6 +128,8 @@ void updateAnimationLoop()
     else if (glfwGetKey(window, GLFW_KEY_Z)) curr_z -= 0.11;
     else if (glfwGetKey(window, GLFW_KEY_T)) curr_z += 0.11;
     else if (glfwGetKey(window, GLFW_KEY_R)) curr_angle += 0.01;
+
+	
     initializeMVPTransformation();
 
     // Send our transformation to the currently bound shader, 
@@ -128,8 +137,12 @@ void updateAnimationLoop()
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
     glUniformMatrix4fv(MatrixIDM, 1, GL_FALSE, &M[0][0]);
 
+    for (int i = 0; i < gameObjects.size(); i++)
+    {
+        gameObjects.at(i)->Draw();
+    }
     // send time as uniform to shader
-	glUniform1f(timeID, curr_time);
+	//glUniform1f(timeID, curr_time);
 
     /*
     // 1rst attribute buffer : vertices
@@ -159,7 +172,7 @@ void updateAnimationLoop()
 
     */
     
-    glEnableVertexAttribArray(0);
+    /*glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer1D);
     glVertexAttribPointer(
         0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
@@ -187,11 +200,11 @@ void updateAnimationLoop()
         0,                  // stride
         (void*)0            // array buffer offset
     );
-
+    
     // Draw the triangle !
     
 
-    glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle
+    glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle*/
     //glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size * 3); // 3 indices starting at 0 -> 1 triangle
 
     glDisableVertexAttribArray(0);

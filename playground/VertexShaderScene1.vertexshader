@@ -12,10 +12,9 @@ out vec3 fNormal;
 out vec3 fCameraPos;
 out vec3 fLightDir;
 out vec4 fPosition;
-
 void main(){
 
-	fLightDir = vec3(1,0,0);
+	fLightDir = vec3(1,1,0);
 	
 	vec4 normalM = M * vec4(vertexNormal_modelspace, 0);
 	fNormal = normalize(normalM.xyz);

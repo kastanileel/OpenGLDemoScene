@@ -24,13 +24,23 @@ LightingDemoObj::~LightingDemoObj()
 
 void LightingDemoObj::Update(float time)
 {
-	
+    shaderState = 0;
+    if (time > 5.0f)
+        shaderState = 1;
+    if (time > 10.0f)
+        shaderState = 2;
+    
+
+    Draw();
 }
 
 void LightingDemoObj::Draw()
 {
     // Use our shader
     glUseProgram(programID);
+
+    // send integer shaderState to shader
+	glUniform1i(shaderStateID, shaderState);
 
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
@@ -62,6 +72,9 @@ void LightingDemoObj::Draw()
 
 bool LightingDemoObj::initializeBuffers()
 {
+
+	shaderStateID = glGetUniformLocation(programID, "shaderState");
+
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);
 

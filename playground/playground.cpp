@@ -139,7 +139,7 @@ void updateAnimationLoop()
 
     for (int i = 0; i < gameObjects.size(); i++)
     {
-        gameObjects.at(i)->Draw();
+        gameObjects.at(i)->Update(curr_time);
     }
     // send time as uniform to shader
 	//glUniform1f(timeID, curr_time);

@@ -14,6 +14,8 @@ private:
 	GLuint vaoID;
 	GLuint vbo[2];
 	GLuint vb_size;
+	GLuint shaderStateID;
+	int shaderState;
 
 	bool initializeBuffers() override;
 	void cleanupBuffers() override;

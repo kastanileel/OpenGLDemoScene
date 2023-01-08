@@ -51,7 +51,7 @@ int main(void)
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("VertexShaderScene1.vertexshader", "FragmentShaderScene1.fragmentshader");
 
-	std::shared_ptr<GameObject> lightingDemoObj = std::make_shared<LightingDemoObj>(programID, "../stlFiles/monke.stl");
+	std::shared_ptr<GameObject> lightingDemoObj = std::make_shared<LightingDemoObj>(programID, "../stlFiles/Utah_teapot.stl");
 	gameObjects.push_back(lightingDemoObj);
 
 	
@@ -388,7 +388,7 @@ bool initializeVertexbuffer()
     //create vertex and normal data
     std::vector< glm::vec3 > vertices = std::vector< glm::vec3 >();
     std::vector< glm::vec3 > normals = std::vector< glm::vec3 >();
-    parseStl(vertices, normals, "../stlFiles/monke.stl");
+    parseStl(vertices, normals, "../stlFiles/Utah_teapot.stl");
     vertexbuffer_size = vertices.size() * sizeof(glm::vec3);
 
     // print normals to console

@@ -1,0 +1,55 @@
+#version 450 core
+
+// Ouput data
+
+// Ouput data
+out vec4 fragColor;
+
+in vec3 fColor;
+in vec3 fNormal;
+in vec3 fCameraPos;
+in vec3 fLightDir;
+in vec4 fPosition;
+uniform int shaderState;
+
+void main()
+{
+    vec2 iResolution = vec2(1920, 1080);
+	float x = gl_FragCoord.x;
+    float y = gl_FragCoord.y;
+    float radius = 500.0 / (shaderState-32)*8.0f;
+    x = (x - iResolution.x/2.0);
+    y = (y - iResolution.y/2.0);
+    float erg = x*x + y*y - radius*radius;
+    
+    if(erg < 0.0){
+         fragColor = vec4(fColor,1.0);
+         if(shaderState > 42){
+	        float fade = (shaderState-42)/10.0;
+	        fragColor = vec4(vec3(0,0,0)*fade + (1-fade)*fColor,1.0);
+          }
+        return;
+    }
+
+    float oversizeFactor = 10000.0 - erg;
+    float blur = 0.0;
+    if(oversizeFactor > 0.0){
+         blur = oversizeFactor/10000.0;
+         blur = 1.0 - blur;
+         fragColor = vec4(blur*fColor,1.0);
+    }
+    else {
+        fragColor = vec4(0,0,0,1.0);
+    }
+	
+
+   //fade fragColor to black if shaderstate is larger than 44
+   if(shaderState > 48){
+	   fragColor = vec4(vec3(0,0,0),1.0);
+   }
+   
+   //and 52 its completed
+
+}
+
+

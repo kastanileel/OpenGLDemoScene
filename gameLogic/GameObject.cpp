@@ -20,7 +20,6 @@ GameObject::GameObject(GLuint shaderProgramID, std::string fileName, float aspec
 GameObject::~GameObject()
 {
 }
-
 void GameObject::parseStl(std::vector< glm::vec3 >& vertices, std::vector< glm::vec3 >& normals, std::string stl_file_name) {
     stl::stl_data info = stl::parse_stl(stl_file_name);
     std::vector<stl::triangle> triangles = info.triangles;
@@ -39,4 +38,8 @@ void GameObject::parseStl(std::vector< glm::vec3 >& vertices, std::vector< glm::
         vertices.push_back(glm::vec3(t.v3.x, t.v3.y, t.v3.z));
         normals.push_back(triangleNormal);
     }
+}
+
+void GameObject::setShaderProgramID(GLuint shaderProgramID) {
+	this->programID = shaderProgramID;
 }

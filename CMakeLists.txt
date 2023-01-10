@@ -62,6 +62,7 @@ add_executable(playground
 	playground/SimpleFragmentShader.fragmentshader
 	playground/SimpleVertexShader.vertexshader
 	playground/FragmentShaderScene1.fragmentshader
+	playground/FragmentShaderScene1Ending.fragmentshader
 	playground/VertexShaderScene1.vertexshader
 	common/shader.cpp
 	common/shader.hpp

@@ -56,6 +56,8 @@ void LightingDemoObj::Update(float time)
         if (shaderState % 4 == 0) {
             rotationDir = !rotationDir;
         }
+        std::cout << shaderState << std::endl;
+
        	
     }
 	prevState = shaderState;
@@ -109,6 +111,7 @@ void LightingDemoObj::Draw()
     glUseProgram(programID);
 
     // send integer shaderState to shader
+	GLuint shaderStateID = glGetUniformLocation(programID, "shaderState");
 	glUniform1i(shaderStateID, shaderState);
 
     // 1rst attribute buffer : vertices

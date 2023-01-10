@@ -33,7 +33,8 @@ using namespace glm;
 std::vector< std::shared_ptr<GameObject> > gameObjects;
 float applicationStartTimeStamp; //time stamp of application start
 glm::vec3 startPos = glm::vec3(50, 20, 0);
-glm::vec3 endPosScene1 = glm::vec3(-1.0, 6.7, -9);
+glm::vec3 endPosScene1 = glm::vec3(-0.3, 6.7, -8.8);
+int switchedScene = 0;
 
 int main(void)
 {
@@ -123,6 +124,7 @@ void updateAnimationLoop()
 	curr_time = (float)glfwGetTime() - applicationStartTimeStamp;
 
     switchCamera(curr_time);
+    switchScenes(curr_time);
     
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -235,6 +237,19 @@ void switchCamera(float time) {
     }
 }
 
+void switchScenes(float time) {
+	if (time > 12.4 && switchedScene < 1) {
+        switchedScene = 1;
+        curr_x = endPosScene1.x;
+        curr_y = endPosScene1.y;
+        curr_z = endPosScene1.z;
+        
+        programID = LoadShaders("VertexShaderScene1.vertexshader", "FragmentShaderScene1Ending.fragmentshader");
+		gameObjects[0]->setShaderProgramID(programID);
+
+    }
+}
+
 bool initializeWindow()
 {
     // Initialise GLFW
@@ -276,7 +291,7 @@ bool initializeWindow()
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
     // Dark blue background
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
     return true;
 }
 

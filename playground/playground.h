@@ -57,5 +57,6 @@ bool closeWindow(); //<<< Closes the OpenGL window and terminates GLFW
 
 void textureTest();
 void switchCamera(float time);
+void switchScenes(float time);
 
 #endif

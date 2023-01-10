@@ -23,6 +23,7 @@ public:
 	void setRotation(float ptich, float yaw, float roll);
 	void setScale(float x, float y, float z);
 	float aspectRatio;
+	void setShaderProgramID(GLuint shaderProgramID);
 
 private:
 	virtual bool initializeBuffers() = 0;

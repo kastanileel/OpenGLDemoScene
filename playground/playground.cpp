@@ -1,4 +1,5 @@
-﻿#include "playground.h"
+﻿#pragma comment(lib, "winmm.lib")
+#include "playground.h"
 
 // Include standard headers
 #include <stdio.h>
@@ -20,6 +21,7 @@ using namespace glm;
 #include <vector>
 #include <memory>
 #include <random>
+#include<windows.h>
 
 //include time
 #include <time.h>
@@ -34,6 +36,10 @@ float applicationStartTimeStamp; //time stamp of application start
 
 int main(void)
 {
+    //play .wav file as sound
+	PlaySound(TEXT("../music/smooth_sailing.wav"), NULL, SND_FILENAME | SND_ASYNC);
+    
+    
     //Initialize window
     bool windowInitialized = initializeWindow();
     if (!windowInitialized) return -1;

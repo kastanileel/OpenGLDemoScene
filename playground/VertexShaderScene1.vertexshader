@@ -18,7 +18,7 @@ void main(){
 	
 	vec4 normalM = M * vec4(vertexNormal_modelspace, 0);
 	fNormal = normalize(normalM.xyz);
-	fColor = vec3(0.5, 0.1, 0.2);
+	fColor = vec3(1, 0.1, 0.2);
 	fCameraPos = vec3(4, 8, -5);
 	
 	gl_Position =  MVP * vec4(vertexPosition_modelspace,1);

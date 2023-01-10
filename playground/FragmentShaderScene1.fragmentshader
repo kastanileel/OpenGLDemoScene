@@ -29,7 +29,7 @@ void main()
 	vec3 cameraToFragN = normalize(cameraToFrag);
 	
 	float outlineDotProduct = dot(cameraToFragN, fNormal);
-	vec3 outlineCol = vec3(1.0, 1.0, 1.0);
+	vec3 outlineCol = vec3(0, 1, 1);
 
 	
 	fragColor = vec4((1-outlineDotProduct) * outlineCol + outlineDotProduct * lightedCol, 1.0);

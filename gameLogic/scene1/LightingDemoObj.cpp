@@ -25,7 +25,7 @@ LightingDemoObj::LightingDemoObj(GLuint shaderProgramID, std::string fileName, f
     shaderState = 0;
     prevState = 0;
 	color = glm::vec3(1.0f, 0, 0);
-    changeAtTime =0.7f;
+    changeAtTime =0.72f;
 	initializeBuffers();
 }
 
@@ -38,7 +38,7 @@ void LightingDemoObj::Update(float time)
     
     if (time > changeAtTime) {
         shaderState++;
-        changeAtTime += 0.37f;
+        changeAtTime += 0.365f;
 
     }
     
@@ -80,7 +80,14 @@ void LightingDemoObj::Update(float time)
         rotation.z += 2 * (time - previousTime);
     previousTime = time;
 
-    Model = glm::rotate(Model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+    if (shaderState > 30) {
+        rotation.z = 0;
+        Model = glm::rotate(Model, 1.5708f, glm::vec3(0.0f, 0.0f, 1.0f));
+    }
+    else
+    {
+        Model = glm::rotate(Model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+    }
 
     Model = transformation * Model;
 

@@ -32,7 +32,8 @@ using namespace glm;
 
 std::vector< std::shared_ptr<GameObject> > gameObjects;
 float applicationStartTimeStamp; //time stamp of application start
-
+glm::vec3 startPos = glm::vec3(50, 20, 0);
+glm::vec3 endPosScene1 = glm::vec3(-1.0, 6.7, -9);
 
 int main(void)
 {
@@ -64,9 +65,13 @@ int main(void)
 
     createVPTransformation();
 
-    curr_x = 0;
-    curr_y = 0;
-    curr_z = 0;
+    /*curr_x = 50;
+    curr_y = 20;
+    curr_z = 0;*/
+
+   curr_x = startPos.x;
+   curr_y = startPos.y;
+   curr_z = startPos.z;
 
     //start animation loop until escape key is pressed
     do {
@@ -117,7 +122,7 @@ void updateAnimationLoop()
     // set variable time to current time in miliseconds
 	curr_time = (float)glfwGetTime() - applicationStartTimeStamp;
 
-    
+    switchCamera(curr_time);
     
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -219,6 +224,15 @@ void updateAnimationLoop()
     // Swap buffers
     glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+void switchCamera(float time) {
+    if (time > 11.4 && time < 12.4) {
+        float movementFinished = time - 11.4;;
+        curr_x = (1 - movementFinished) * startPos.x + movementFinished * endPosScene1.x;
+        curr_y = (1 - movementFinished) * startPos.y + movementFinished * endPosScene1.y;
+        curr_z = (1 - movementFinished) * startPos.z + movementFinished * endPosScene1.z;
+    }
 }
 
 bool initializeWindow()
@@ -405,7 +419,7 @@ bool createVPTransformation() {
     //glm::mat4 Projection = glm::frustum(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f);
     // Camera matrix
 
-	cameraPos = glm::vec3(50, 20, 0);
+	cameraPos = glm::vec3(curr_x, curr_y, curr_z);
     
     glm::mat4 View = glm::lookAt(
        cameraPos, // Camera is at (4,3,-3), in World Space

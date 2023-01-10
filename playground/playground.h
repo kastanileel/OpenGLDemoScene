@@ -56,5 +56,6 @@ bool cleanupColorbuffer(); //<<< frees all recources from the vertex buffer
 bool closeWindow(); //<<< Closes the OpenGL window and terminates GLFW
 
 void textureTest();
+void switchCamera(float time);
 
 #endif

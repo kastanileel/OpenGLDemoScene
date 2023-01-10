@@ -4,8 +4,10 @@ layout(location = 0) in vec3 vertexPosition_modelspace;
 layout(location = 1) in vec3 vertexNormal_modelspace;
 
 // Values that stay constant for the whole mesh.
-uniform mat4 MVP;
-uniform mat4 M;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+uniform vec3 cameraPos;
 //Output variables
 out vec3 fColor;
 out vec3 fNormal;
@@ -14,15 +16,17 @@ out vec3 fLightDir;
 out vec4 fPosition;
 void main(){
 
-	fLightDir = vec3(1,1,0);
+	fLightDir = vec3(0,1,0);
 	
-	vec4 normalM = M * vec4(vertexNormal_modelspace, 0);
+	vec4 normalM = model * vec4(vertexNormal_modelspace, 0);
 	fNormal = normalize(normalM.xyz);
 	fColor = vec3(1, 0.1, 0.2);
-	fCameraPos = vec3(4, 8, -5);
+	fCameraPos = -cameraPos;
+
+	mat4 mvp = projection * view * model;
 	
-	gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
+	gl_Position =  mvp * vec4(vertexPosition_modelspace,1);
 	
-	fPosition = M * vec4(vertexPosition_modelspace,1);
+	fPosition = model * vec4(vertexPosition_modelspace,1);
 	
 }

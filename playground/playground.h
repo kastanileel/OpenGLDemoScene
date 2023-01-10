@@ -21,12 +21,14 @@ GLuint vertexBuffer1D;
 GLuint programID;
 
 //global variables to handle the MVP matrix
-GLuint MatrixID;
-GLuint MatrixIDM;
-glm::mat4 MVP;
-glm::mat4 M;
-
+GLuint viewID;
+GLuint projectionID;
+glm::mat4 view;
+glm::mat4 projection;
 float width, height;
+
+GLuint cameraPosID;
+glm::vec3 cameraPos;
 
 float curr_x;
 float curr_y;
@@ -45,7 +47,7 @@ int main(void); //<<< main function, called at startup
 void updateAnimationLoop(); //<<< updates the animation loop
 void parseStl(std::vector< glm::vec3 >& vertices, std::vector< glm::vec3 >& normals, std::string stl_file_name);
 bool initializeWindow(); //<<< initializes the window using GLFW and GLEW
-bool initializeMVPTransformation();
+bool createVPTransformation();
 bool initializeVertexbuffer(); //<<< initializes the vertex buffer array and binds it OpenGL
 bool initializeColorbuffer(); //<<< initializes the vertex buffer array and binds it OpenGL
 

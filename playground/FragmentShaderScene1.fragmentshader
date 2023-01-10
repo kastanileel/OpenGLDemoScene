@@ -18,7 +18,7 @@ void main()
 	
 	
 	float dotProduct = dot(fNormal, fLightDir);
-	vec3 lightedCol = vec3(fColor.x - dotProduct, fColor.y - dotProduct, fColor.z - dotProduct);
+	vec3 lightedCol =fColor*dotProduct;
 	
 	fragColor = vec4(lightedCol, 1.0);
 

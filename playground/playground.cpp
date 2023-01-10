@@ -57,12 +57,12 @@ int main(void)
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("VertexShaderScene1.vertexshader", "FragmentShaderScene1.fragmentshader");
 
-	std::shared_ptr<GameObject> lightingDemoObj = std::make_shared<LightingDemoObj>(programID, "../stlFiles/Utah_teapot.stl");
+	std::shared_ptr<GameObject> lightingDemoObj = std::make_shared<LightingDemoObj>(programID, "../stlFiles/Utah_teapot.stl", width/height);
 	gameObjects.push_back(lightingDemoObj);
 
 	
 
-    initializeMVPTransformation();
+    createVPTransformation();
 
     curr_x = 0;
     curr_y = 0;
@@ -136,12 +136,13 @@ void updateAnimationLoop()
     else if (glfwGetKey(window, GLFW_KEY_R)) curr_angle += 0.01;
 
 	
-    initializeMVPTransformation();
+    createVPTransformation();
 
     // Send our transformation to the currently bound shader, 
     // in the "MVP" uniform
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(MatrixIDM, 1, GL_FALSE, &M[0][0]);
+    glUniformMatrix4fv(viewID, 1, GL_FALSE, &view[0][0]);
+    glUniformMatrix4fv(projectionID, 1, GL_FALSE, &projection[0][0]);
+    glUniform3f(cameraPosID, cameraPos.x, cameraPos.y, cameraPos.z);
 
     for (int i = 0; i < gameObjects.size(); i++)
     {
@@ -347,13 +348,13 @@ void textureTest() {
 
 }
 
-bool initializeMVPTransformation()
+/*bool initializeMVPTransformation()
 {
     // Get a handle for our "MVP" uniform
     GLuint MatrixIDnew = glGetUniformLocation(programID, "MVP");
-    MatrixID = MatrixIDnew;
+    //MatrixID = MatrixIDnew;
 
-    MatrixIDM = glGetUniformLocation(programID, "M");
+  //  MatrixIDM = glGetUniformLocation(programID, "M");
 
 	timeID = glGetUniformLocation(programID, "time");
 
@@ -363,27 +364,67 @@ bool initializeMVPTransformation()
     //glm::mat4 Projection = glm::frustum(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f);
     // Camera matrix
     glm::mat4 View = glm::lookAt(
-        glm::vec3(0, 0, 2), // Camera is at (4,3,-3), in World Space
+        glm::vec3(50, 50, 0), // Camera is at (4,3,-3), in World Space
         glm::vec3(0, 0, 0), // and looks at the origin
         glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+        
     );
     // Model matrix : an identity matrix (model will be at the origin)
     glm::mat4 Model = glm::mat4(1.0f);
 
     Model = glm::rotate(Model, curr_angle, glm::vec3(0.0f, 1.0f, 1.0f));
 
+    float ratio = width / height;
+
     glm::mat4 transformation;//additional transformation for the model
-    transformation[0][0] = 3; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
-    transformation[0][1] = 0.0; transformation[1][1] = 3.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
+    transformation[0][0] = ratio * 1; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
+    transformation[0][1] = 0.0; transformation[1][1] = 1.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
     transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = curr_z;
     transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
 
     // Our ModelViewProjection : multiplication of our 3 matrices
-    MVP = Projection * View * transformation * Model; // Remember, matrix multiplication is the other way around
-	M =  transformation * Model;
+   // MVP = Projection * View * transformation * Model; // Remember, matrix multiplication is the other way around
+	//M =  View * transformation * Model;
 
     return true;
 
+}*/
+
+bool createVPTransformation() {
+    
+    GLuint viewIDNew = glGetUniformLocation(programID, "view");
+    viewID = viewIDNew;
+
+    GLuint projectionIDNew = glGetUniformLocation(programID, "projection");
+    projectionID = projectionIDNew;
+
+	GLuint cameraPosIDNew = glGetUniformLocation(cameraPosID, "cameraPos");
+	cameraPosID = cameraPosIDNew;
+    
+    // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 500.0f);
+    //glm::mat4 Projection = glm::frustum(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f);
+    // Camera matrix
+
+	cameraPos = glm::vec3(50, 20, 0);
+    
+    glm::mat4 View = glm::lookAt(
+       cameraPos, // Camera is at (4,3,-3), in World Space
+        glm::vec3(0, 0, 0), // and looks at the origin
+        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+
+    );
+
+    
+    view = View;
+
+	std::cout << "view: " << view[0][0] << " " << view[0][1] << " " << view[0][2] << " " << view[0][3] << std::endl;
+	std::cout << "view: " << view[1][0] << " " << view[1][1] << " " << view[1][2] << " " << view[1][3] << std::endl;
+	std::cout << "view: " << view[2][0] << " " << view[2][1] << " " << view[2][2] << " " << view[2][3] << std::endl;
+	std::cout << "view: " << view[3][0] << " " << view[3][1] << " " << view[3][2] << " " << view[3][3] << std::endl;
+    projection = Projection;
+
+    return true;
 }
 
 bool initializeVertexbuffer()

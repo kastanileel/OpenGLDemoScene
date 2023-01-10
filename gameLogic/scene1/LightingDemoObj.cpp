@@ -1,19 +1,24 @@
 #include "LightingDemoObj.h"
 #include <vector>
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-LightingDemoObj::LightingDemoObj(GLuint shaderProgramID, std::string fileName) : GameObject(shaderProgramID, fileName)
+LightingDemoObj::LightingDemoObj(GLuint shaderProgramID, std::string fileName, float aspectRatio) : GameObject(shaderProgramID, fileName, aspectRatio)
 {
     this->programID = shaderProgramID;
     this->fileName = fileName;
-    this->position[0] = 0.0f;
-    this->position[1] = 0.0f;
-    this->position[2] = 0.0f;
-    this->rotation[0] = 0.0f;
-    this->rotation[1] = 0.0f;
-    this->rotation[2] = 0.0f;
-    this->scale[0] = 1.0f;
-    this->scale[1] = 1.0f;
-    this->scale[2] = 1.0f;
+    this->position.x = 0.0f;
+    this->position.y = 0.0f;
+    this->position.z = 0.0f;
+    this->rotation.x = 0.0f;
+    this->rotation.y = 0.0f;
+    this->rotation.z = 0.0f;
+    this->scale.x = 1.0f;
+    this->scale.y = 1.0f;
+    this->scale.z = 1.0f;
+    this->aspectRatio = aspectRatio;
+    this->previousTime = 0.0f;
 
 	initializeBuffers();
 }
@@ -29,8 +34,38 @@ void LightingDemoObj::Update(float time)
         shaderState = 1;
     if (time > 10.0f)
         shaderState = 2;
+
+    glm::mat4 Model = glm::mat4(1.0f);
+
+    Model = glm::rotate(Model, -1.5708f, glm::vec3(1.0f, 0.0f, 0.0f));
     
 
+    glm::mat4 transformation;//additional transformation for the model
+    transformation[0][0] = aspectRatio * 1; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = position.x;
+    transformation[0][1] = 0.0; transformation[1][1] = 1.0; transformation[2][1] = 0.0; transformation[3][1] = position.y;
+    transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = position.z;
+    transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
+    
+    
+    if (shaderState % 2 == 0) {
+        rotation.z += (time-previousTime);
+    }
+	else {
+        rotation.z -= (time-previousTime);      
+	}
+
+    previousTime = time;
+
+    Model = glm::rotate(Model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+    Model = transformation * Model;
+
+	GLuint model = glGetUniformLocation(programID, "model");
+   
+
+    glUniformMatrix4fv(model, 1, GL_FALSE, &Model[0][0]);
+
+    
     Draw();
 }
 

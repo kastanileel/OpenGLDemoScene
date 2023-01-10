@@ -2,19 +2,20 @@
 #include "./playground/parse_stl.h"
 
 
-GameObject::GameObject(GLuint shaderProgramID, std::string fileName)
+GameObject::GameObject(GLuint shaderProgramID, std::string fileName, float aspectRatio)
 {
 	this->programID = shaderProgramID;
 	this->fileName = fileName;
-	this->position[0] = 0.0f;
-	this->position[1] = 0.0f;
-	this->position[2] = 0.0f;
-	this->rotation[0] = 0.0f;
-	this->rotation[1] = 0.0f;
-	this->rotation[2] = 0.0f;
-	this->scale[0] = 1.0f;
-	this->scale[1] = 1.0f;
-	this->scale[2] = 1.0f;
+	this->position.x = 0.0f;
+	this->position.y = 0.0f;
+	this->position.z = 0.0f;
+	this->rotation.x = 0.0f;
+	this->rotation.y = 0.0f;
+	this->rotation.z = 0.0f;
+	this->scale.x = 1.0f;
+    this->scale.y = 1.0f;
+	this->scale.z = 1.0f;
+    this->aspectRatio = aspectRatio;
 }
 GameObject::~GameObject()
 {

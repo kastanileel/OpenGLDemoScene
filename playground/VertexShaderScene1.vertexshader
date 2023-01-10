@@ -8,6 +8,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPos;
+uniform vec3 color;
 //Output variables
 out vec3 fColor;
 out vec3 fNormal;
@@ -16,17 +17,17 @@ out vec3 fLightDir;
 out vec4 fPosition;
 void main(){
 
-	fLightDir = vec3(0,1,0);
+	fLightDir = vec3(0,0,1);
 	
-	vec4 normalM = model * vec4(vertexNormal_modelspace, 0);
-	fNormal = normalize(normalM.xyz);
-	fColor = vec3(1, 0.1, 0.2);
-	fCameraPos = -cameraPos;
+	vec4 normal = view * model * vec4(vertexNormal_modelspace, 0);
+	fNormal = normalize(normal.xyz);
+	fColor = color;
+	fCameraPos = cameraPos;
 
 	mat4 mvp = projection * view * model;
 	
 	gl_Position =  mvp * vec4(vertexPosition_modelspace,1);
 	
-	fPosition = model * vec4(vertexPosition_modelspace,1);
+	fPosition = view * model * vec4(vertexPosition_modelspace,1);
 	
 }

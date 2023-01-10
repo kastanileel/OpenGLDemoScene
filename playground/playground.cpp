@@ -117,7 +117,6 @@ void updateAnimationLoop()
     // set variable time to current time in miliseconds
 	curr_time = (float)glfwGetTime() - applicationStartTimeStamp;
 
-	//std::cout << "curr_time: " << curr_time << std::endl;
     
     
     // Clear the screen
@@ -418,11 +417,7 @@ bool createVPTransformation() {
     
     view = View;
 
-	std::cout << "view: " << view[0][0] << " " << view[0][1] << " " << view[0][2] << " " << view[0][3] << std::endl;
-	std::cout << "view: " << view[1][0] << " " << view[1][1] << " " << view[1][2] << " " << view[1][3] << std::endl;
-	std::cout << "view: " << view[2][0] << " " << view[2][1] << " " << view[2][2] << " " << view[2][3] << std::endl;
-	std::cout << "view: " << view[3][0] << " " << view[3][1] << " " << view[3][2] << " " << view[3][3] << std::endl;
-    projection = Projection;
+	projection = Projection;
 
     return true;
 }

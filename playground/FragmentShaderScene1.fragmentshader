@@ -13,19 +13,24 @@ uniform int shaderState;
 void main()
 {
 	fragColor = vec4(fColor, 1.0);
-	if(shaderState == 0)
+	if(shaderState < 8)
 		return;
 	
+	vec3 cameraToFrag = vec3(fCameraPos.x - fPosition.x, fCameraPos.y - fPosition.y, fCameraPos.z - fPosition.z); 
+	float brightness = sin(length(cameraToFrag));
+	fragColor = brightness * vec4(fColor,1.0);
+
+	if(shaderState<16)
+		return;
 	
 	float dotProduct = dot(fNormal, fLightDir);
 	vec3 lightedCol =fColor*dotProduct;
 	
 	fragColor = vec4(lightedCol, 1.0);
 
-	if(shaderState == 1)
+	if(shaderState < 24)
 		return;
-
-	vec3 cameraToFrag = vec3(fCameraPos.x - fPosition.x, fCameraPos.y - fPosition.y, fCameraPos.z - fPosition.z);
+	
 	vec3 cameraToFragN = normalize(cameraToFrag);
 	
 	float outlineDotProduct = dot(cameraToFragN, fNormal);

@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 LightingDemoObj::LightingDemoObj(GLuint shaderProgramID, std::string fileName, float aspectRatio) : GameObject(shaderProgramID, fileName, aspectRatio)
 {
@@ -20,6 +21,11 @@ LightingDemoObj::LightingDemoObj(GLuint shaderProgramID, std::string fileName, f
     this->aspectRatio = aspectRatio;
     this->previousTime = 0.0f;
 
+    rotationDir = false;
+    shaderState = 0;
+    prevState = 0;
+	color = glm::vec3(1.0f, 0, 0);
+    changeAtTime =0.7f;
 	initializeBuffers();
 }
 
@@ -29,11 +35,30 @@ LightingDemoObj::~LightingDemoObj()
 
 void LightingDemoObj::Update(float time)
 {
-    shaderState = 0;
-    if (time > 5.0f)
-        shaderState = 1;
-    if (time > 10.0f)
-        shaderState = 2;
+    
+    if (time > changeAtTime) {
+        shaderState++;
+        changeAtTime += 0.37f;
+
+    }
+    
+    if (prevState != shaderState) {
+
+        //set new seed to rand
+		srand(static_cast <unsigned> (previousTime * 1000.0f));
+        
+        //generate random float between 0.0f and 1.0f
+       
+		color.x = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		color.y = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		color.z = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+        if (shaderState % 4 == 0) {
+            rotationDir = !rotationDir;
+        }
+       	
+    }
+	prevState = shaderState;
 
     glm::mat4 Model = glm::mat4(1.0f);
 
@@ -47,13 +72,12 @@ void LightingDemoObj::Update(float time)
     transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
     
     
-    if (shaderState % 2 == 0) {
-        rotation.z += (time-previousTime);
-    }
-	else {
-        rotation.z -= (time-previousTime);      
-	}
+   
 
+    if(rotationDir)
+        rotation.z -= 2 * (time - previousTime);
+    else
+        rotation.z += 2 * (time - previousTime);
     previousTime = time;
 
     Model = glm::rotate(Model, rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
@@ -61,9 +85,12 @@ void LightingDemoObj::Update(float time)
     Model = transformation * Model;
 
 	GLuint model = glGetUniformLocation(programID, "model");
-   
 
     glUniformMatrix4fv(model, 1, GL_FALSE, &Model[0][0]);
+
+    GLuint colorID = glGetUniformLocation(programID, "color");
+	glUniform3f(colorID, color.x, color.y, color.z);
+
 
     
     Draw();
@@ -109,6 +136,7 @@ bool LightingDemoObj::initializeBuffers()
 {
 
 	shaderStateID = glGetUniformLocation(programID, "shaderState");
+
 
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);

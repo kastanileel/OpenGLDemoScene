@@ -20,7 +20,7 @@ public:
 	virtual void Draw() = 0;
 	void parseStl(std::vector< glm::vec3 >& vertices, std::vector< glm::vec3 >& normals, std::string stl_file_name);
 	void setPosition(float x, float y, float z);
-	void setRotation(float ptich, float yaw, float roll);
+	void setRotation(float pitch, float yaw, float roll);
 	void setScale(float x, float y, float z);
 	float aspectRatio;
 	void setShaderProgramID(GLuint shaderProgramID);

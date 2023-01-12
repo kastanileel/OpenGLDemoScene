@@ -5,7 +5,7 @@
 class RectangleObj: public GameObject
 {
 public:
-	RectangleObj(GLuint shaderProgramID, float aspectRatio);
+	RectangleObj(GLuint shaderProgramID, float aspectRatio, float time);
 	~RectangleObj();
 	void Update(float time) override;
 	void Draw() override;
@@ -15,6 +15,8 @@ private:
 	GLuint uvbufferID;
 	GLuint textureID;
 	GLuint textureID2;
+	GLuint textureID3;
+	GLuint textureID4;
 	GLuint textureSamplerID;
 	bool rotationDir;
 	glm::vec3 color;

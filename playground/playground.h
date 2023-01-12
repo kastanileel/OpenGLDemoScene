@@ -36,7 +36,7 @@ float curr_z;
 float curr_angle;
 
 //time as float
-float curr_time;
+float curr_time = 0;
 GLuint timeID;
 
 GLuint texID;

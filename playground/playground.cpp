@@ -82,7 +82,7 @@ int main(void)
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
-        glfwWindowShouldClose(window) == 0);
+        glfwWindowShouldClose(window) == 0 && curr_time < 35.0f);
 
 
     //Cleanup and close window
@@ -245,7 +245,7 @@ void switchScenes(float time) {
         programID = LoadShaders("VertexShaderScene2.vertexshader", "FragmentShaderScene2.fragmentshader");
         
         // create Rectangle Obj
-        std::shared_ptr<GameObject> rectangleObj = std::make_shared<RectangleObj>(programID, (width / height));
+        std::shared_ptr<GameObject> rectangleObj = std::make_shared<RectangleObj>(programID, (width / height), time);
 		// clear all game objects
 		gameObjects.clear();
 		gameObjects.push_back(rectangleObj);

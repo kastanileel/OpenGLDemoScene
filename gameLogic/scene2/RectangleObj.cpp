@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-RectangleObj::RectangleObj(GLuint shaderProgramID, float aspectRatio) : GameObject(shaderProgramID, aspectRatio)
+RectangleObj::RectangleObj(GLuint shaderProgramID, float aspectRatio, float time) : GameObject(shaderProgramID, aspectRatio)
 {
     this->programID = shaderProgramID;
     this->position = glm::vec3(-5, 5, 0);
@@ -16,9 +16,9 @@ RectangleObj::RectangleObj(GLuint shaderProgramID, float aspectRatio) : GameObje
     this->scale.y = 1.0f;
     this->scale.z = 1.0f;
     this->aspectRatio = aspectRatio;
-	this->shaderState = 2;
+	this->shaderState = 0;
 	this->rotationDir = false;
-    this->changeAtTime = 0.1f;
+    this->changeAtTime = time + 0.2f;
 	this->stackedShaderTime = 0.0f;
 	this->previousTime = 0.0f;
 	initializeBuffers();
@@ -38,6 +38,8 @@ void RectangleObj::Update(float time)
 			rotationDir = !rotationDir;
     }
 
+   
+
     if(rotationDir)
 		stackedShaderTime += (time-previousTime);
 	else
@@ -46,7 +48,6 @@ void RectangleObj::Update(float time)
 	previousTime = time;
     
 	std::cout << shaderState << std::endl;
-	std::cout << rotationDir << std::endl;
     
     glm::mat4 Model = glm::mat4(1.0f);
 
@@ -97,16 +98,32 @@ void RectangleObj::Draw()
 
     textureSamplerID = glGetUniformLocation(programID, "textureSampler");
 
-    if (rotationDir) {
+	if (shaderState  < 8) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
         glUniform1i(textureSamplerID, 0);
     }
-    else {
+    else if (shaderState < 12) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID2);
         glUniform1i(textureSamplerID, 0);
     }
+	else if (shaderState < 16) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID3);
+		glUniform1i(textureSamplerID, 0);
+	}
+    else if (shaderState < 20) {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID4);
+		glUniform1i(textureSamplerID, 0);
+	}
+    else if (shaderState < 24) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID3);
+        glUniform1i(textureSamplerID, 0);
+    }
+  
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, uvbufferID);
@@ -223,9 +240,9 @@ bool RectangleObj::initializeBuffers()
     static const GLubyte checkerboard_tex2[] = {
        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
        0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-       0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00,
-       0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -241,6 +258,58 @@ bool RectangleObj::initializeBuffers()
         GL_RED,
         GL_UNSIGNED_BYTE,
         checkerboard_tex2
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    
+    static const GLubyte checkerboard_tex3[] = {
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+
+    glGenTextures(1, &textureID3);
+    glBindTexture(GL_TEXTURE_2D, textureID3);
+    glTextureStorage2D(textureID3, 4, GL_R8, 8, 8);
+    glTextureSubImage2D(textureID3,
+        0,
+        0, 0,
+        8, 8,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        checkerboard_tex3
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+    static const GLubyte checkerboard_tex4[] = {
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+
+    glGenTextures(1, &textureID4);
+    glBindTexture(GL_TEXTURE_2D, textureID4);
+    glTextureStorage2D(textureID4, 4, GL_R8, 8, 8);
+    glTextureSubImage2D(textureID4,
+        0,
+        0, 0,
+        8, 8,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        checkerboard_tex4
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

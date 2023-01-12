@@ -27,11 +27,48 @@ void main()
 
 	vec2 st = vec2(a/0.31415, 1/r);
 	
-	st += time;
+	st.y += 2*time;
+	st.x += 2*time;
 
 	vec3 color = texture(textureSampler, st).rgb;
 
+	//depending on shaderState color should be red green blue and purple 
+	// return if color is black
+	if (color.r == 0 && color.g == 0 && color.b == 0)
+	{
+		fragColor = vec4(color,1);
+		return;
+	}
+	
+	if (shaderState% 4 == 0)
+	{
+		color = vec3(1, 0, 0);
+	}
+	else if (shaderState% 4 == 1)
+	{
+		color = vec3(0, 1, 0);
+	}
+	else if (shaderState% 4 == 2)
+	{
+		color = vec3(0, 0, 1);
+	}
+	else if (shaderState% 4 == 3)
+	{
+		color = vec3(1, 0, 1);
+	}
+	
 	color *= 2*r;
+
+	// fade in if shaderState smaller than 6
+	if (shaderState < 4)
+	{
+		color *= shaderState / 6.0;
+	}
+
+	if(shaderState > 24){
+	//fade out over 12 states
+	color *= (36 - shaderState) / 12.0;
+	}
 	
 	fragColor = vec4(color,0.1);
 	

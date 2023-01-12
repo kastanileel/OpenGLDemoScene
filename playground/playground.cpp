@@ -39,15 +39,13 @@ int switchedScene = 0;
 
 int main(void)
 {
-    //play .wav file as sound
-	PlaySound(TEXT("../music/smooth_sailing.wav"), NULL, SND_FILENAME | SND_ASYNC);
-    
-    
     //Initialize window
     bool windowInitialized = initializeWindow();
     if (!windowInitialized) return -1;
 
-	applicationStartTimeStamp = (float) glfwGetTime();
+	
+    
+   
     
     //Initialize vertex buffer
    // bool vertexbufferInitialized = initializeVertexbuffer();
@@ -59,7 +57,10 @@ int main(void)
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("VertexShaderScene1.vertexshader", "FragmentShaderScene1.fragmentshader");
-
+  
+    PlaySound(TEXT("../music/smooth_sailing.wav"), NULL, SND_FILENAME | SND_ASYNC);
+    Sleep(200);
+    applicationStartTimeStamp = (float)glfwGetTime();
 	std::shared_ptr<GameObject> lightingDemoObj = std::make_shared<LightingDemoObj>(programID, "../stlFiles/Utah_teapot.stl", width/height);
 	gameObjects.push_back(lightingDemoObj);
 
@@ -155,71 +156,6 @@ void updateAnimationLoop()
     {
         gameObjects.at(i)->Update(curr_time);
     }
-    // send time as uniform to shader
-	//glUniform1f(timeID, curr_time);
-
-    /*
-    // 1rst attribute buffer : vertices
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[0]);
-    glVertexAttribPointer(
-        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
-
-    // 3rd attribute buffer : normals
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[1]);
-    glVertexAttribPointer(
-        1,                  // attribute 1. No particular reason for 1, but must match the layout in the shader.
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
-
-
-    */
-    
-    /*glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer1D);
-    glVertexAttribPointer(
-        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        3,                  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
- 
-    
-    
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
-    glUniform1i(textureSampler2D, 0);
-    
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glVertexAttribPointer(
-        2,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-        2,  // size
-        GL_FLOAT,           // type
-        GL_FALSE,           // normalized?
-        0,                  // stride
-        (void*)0            // array buffer offset
-    );
-    
-    // Draw the triangle !
-    
-
-    glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size); // 3 indices starting at 0 -> 1 triangle*/
-    //glDrawArrays(GL_TRIANGLES, 0, vertexbuffer_size * 3); // 3 indices starting at 0 -> 1 triangle
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);

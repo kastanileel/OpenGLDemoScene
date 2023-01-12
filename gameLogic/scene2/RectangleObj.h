@@ -19,6 +19,8 @@ private:
 	glm::vec3 color;
 	int shaderState;
 	float changeAtTime;
+	float stackedShaderTime;
+	float previousTime;
 	bool initializeBuffers() override;
 	void cleanupBuffers() override;
 };

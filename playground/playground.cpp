@@ -239,7 +239,7 @@ void switchCamera(float time) {
 }
 
 void switchScenes(float time) {
-    if (time > 19.6 && switchedScene < 2) {
+    if (time > 19.4 && switchedScene < 2) {
 
         switchedScene = 2;
         programID = LoadShaders("VertexShaderScene2.vertexshader", "FragmentShaderScene2.fragmentshader");

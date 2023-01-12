@@ -17,22 +17,17 @@ void main()
 {
 	vec2 iResolution = vec2(1920, 1080);
 	
-	vec2 uv = gl_FragCoord.xy/iResolution;
+	vec2 uv = (gl_FragCoord.xy - 0.5 *iResolution.xy)/iResolution.y;
 	// center uv
-	uv -= 0.5;
 
-	float a = atan(uv.y/ uv.x);
+	float a = atan(uv.y, uv.x);
 	float r = length(uv);
 
 
 
-	vec2 st = vec2(a/0.3, 0.5/r);
+	vec2 st = vec2(a/0.31415, 1/r);
 	
-	if(rotationDir)
-		st.x += time;
-	else
-		st.x -= time;
-	st.y += + 0.7*time;
+	st += time;
 
 	vec3 color = texture(textureSampler, st).rgb;
 

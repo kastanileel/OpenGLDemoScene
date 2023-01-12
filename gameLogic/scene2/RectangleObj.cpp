@@ -16,9 +16,11 @@ RectangleObj::RectangleObj(GLuint shaderProgramID, float aspectRatio) : GameObje
     this->scale.y = 1.0f;
     this->scale.z = 1.0f;
     this->aspectRatio = aspectRatio;
-	this->shaderState = 0;
+	this->shaderState = 2;
 	this->rotationDir = false;
-    this->changeAtTime = 0.0f;
+    this->changeAtTime = 0.1f;
+	this->stackedShaderTime = 0.0f;
+	this->previousTime = 0.0f;
 	initializeBuffers();
 }
 
@@ -36,6 +38,13 @@ void RectangleObj::Update(float time)
 			rotationDir = !rotationDir;
     }
 
+    if(rotationDir)
+		stackedShaderTime += (time-previousTime);
+	else
+		stackedShaderTime -= (time - previousTime);
+
+	previousTime = time;
+    
 	std::cout << shaderState << std::endl;
 	std::cout << rotationDir << std::endl;
     
@@ -57,7 +66,7 @@ void RectangleObj::Update(float time)
     glUniformMatrix4fv(model, 1, GL_FALSE, &Model[0][0]);
 
 	GLuint timeID = glGetUniformLocation(programID, "time");
-	glUniform1f(timeID, time);
+	glUniform1f(timeID, stackedShaderTime);
 
 	GLuint shaderStateID = glGetUniformLocation(programID, "shaderState");
 	glUniform1i(shaderStateID, shaderState);

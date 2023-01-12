@@ -14,6 +14,7 @@ private:
 	GLuint vb_size;
 	GLuint uvbufferID;
 	GLuint textureID;
+	GLuint textureID2;
 	GLuint textureSamplerID;
 	bool rotationDir;
 	glm::vec3 color;

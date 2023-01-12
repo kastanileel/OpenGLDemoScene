@@ -97,9 +97,16 @@ void RectangleObj::Draw()
 
     textureSamplerID = glGetUniformLocation(programID, "textureSampler");
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glUniform1i(textureSamplerID, 0);
+    if (rotationDir) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glUniform1i(textureSamplerID, 0);
+    }
+    else {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID2);
+        glUniform1i(textureSamplerID, 0);
+    }
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, uvbufferID);
@@ -209,6 +216,31 @@ bool RectangleObj::initializeBuffers()
         GL_RED,
         GL_UNSIGNED_BYTE,
         checkerboard_tex
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    static const GLubyte checkerboard_tex2[] = {
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+
+    glGenTextures(1, &textureID2);
+    glBindTexture(GL_TEXTURE_2D, textureID2);
+    glTextureStorage2D(textureID2, 4, GL_R8, 8, 8);
+    glTextureSubImage2D(textureID2,
+        0,
+        0, 0,
+        8, 8,
+        GL_RED,
+        GL_UNSIGNED_BYTE,
+        checkerboard_tex2
     );
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

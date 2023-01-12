@@ -64,12 +64,17 @@ add_executable(playground
 	playground/FragmentShaderScene1.fragmentshader
 	playground/FragmentShaderScene1Ending.fragmentshader
 	playground/VertexShaderScene1.vertexshader
+	playground/FragmentShaderScene2.fragmentshader
+	playground/VertexShaderScene2.vertexshader
 	common/shader.cpp
 	common/shader.hpp
 	gameLogic/GameObject.h
 	gameLogic/GameObject.cpp
 	gameLogic/scene1/LightingDemoObj.h
 	gameLogic/scene1/LightingDemoObj.cpp
+	gameLogic/scene2/RectangleObj.h
+	gameLogic/scene2/RectangleObj.cpp
+
 )
 target_link_libraries(playground
 	${ALL_LIBS}

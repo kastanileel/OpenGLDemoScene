@@ -1,0 +1,43 @@
+#version 450 core
+
+
+// Ouput data
+out vec4 fragColor;
+
+uniform sampler2D textureSampler;
+uniform float time;
+uniform int shaderState;
+uniform bool rotationDir;
+
+in vec2 uvTexture;
+in vec3 fCameraPos;
+in vec4 fPosition;
+
+void main()
+{
+	vec2 iResolution = vec2(1920, 1080);
+	
+	vec2 uv = gl_FragCoord.xy/iResolution;
+	// center uv
+	uv -= 0.5;
+
+	float a = atan(uv.y/ uv.x);
+	float r = length(uv);
+
+
+
+	vec2 st = vec2(a/0.3, 0.5/r);
+	
+	if(rotationDir)
+		st.x += time;
+	else
+		st.x -= time;
+	st.y += + 0.7*time;
+
+	vec3 color = texture(textureSampler, st).rgb;
+
+	color *= 2*r;
+	
+	fragColor = vec4(color,0.1);
+	
+}

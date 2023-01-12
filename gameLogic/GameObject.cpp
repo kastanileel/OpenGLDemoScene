@@ -17,6 +17,12 @@ GameObject::GameObject(GLuint shaderProgramID, std::string fileName, float aspec
 	this->scale.z = 1.0f;
     this->aspectRatio = aspectRatio;
 }
+
+GameObject::GameObject(GLuint shaderProgramID, float aspectRatio)
+{
+	this->programID = shaderProgramID;
+	this->aspectRatio = aspectRatio;
+}
 GameObject::~GameObject()
 {
 }

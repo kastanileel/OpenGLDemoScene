@@ -28,6 +28,7 @@ using namespace glm;
 
 #include "gameLogic/GameObject.h"
 #include "gameLogic/scene1/LightingDemoObj.h"
+#include "gameLogic/scene2/RectangleObj.h"
 
 
 std::vector< std::shared_ptr<GameObject> > gameObjects;
@@ -238,7 +239,19 @@ void switchCamera(float time) {
 }
 
 void switchScenes(float time) {
-	if (time > 12.4 && switchedScene < 1) {
+    if (time > 19.6 && switchedScene < 2) {
+
+        switchedScene = 2;
+        programID = LoadShaders("VertexShaderScene2.vertexshader", "FragmentShaderScene2.fragmentshader");
+        
+        // create Rectangle Obj
+        std::shared_ptr<GameObject> rectangleObj = std::make_shared<RectangleObj>(programID, (width / height));
+		// clear all game objects
+		gameObjects.clear();
+		gameObjects.push_back(rectangleObj);
+        
+    }
+	else if (time > 12.4 && switchedScene < 1) {
         switchedScene = 1;
         curr_x = endPosScene1.x;
         curr_y = endPosScene1.y;

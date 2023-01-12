@@ -10,6 +10,7 @@ class GameObject
 {
 public:
 	GameObject(GLuint shaderProgramID, std::string fileName, float aspectRatio);
+	GameObject(GLuint shaderProgramID, float aspectRatio);
 	~GameObject();
 	glm::vec3 position;
 	glm::vec3 rotation;

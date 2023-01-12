@@ -1,0 +1,27 @@
+#version 450 core
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec2 vertexUV;
+
+// Values that stay constant for the whole mesh.
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+uniform vec3 cameraPos;
+
+//Output variables
+
+out vec2 uvTexture;
+out vec3 fCameraPos;
+out vec4 fPosition;
+
+void main(){
+
+	fCameraPos = cameraPos;
+	uvTexture = vertexUV;
+
+	mat4 mvp = projection * view * model;
+	gl_Position =  mvp * vec4(vertexPosition_modelspace,1);
+	fPosition = view * model * vec4(vertexPosition_modelspace,1);
+	
+}

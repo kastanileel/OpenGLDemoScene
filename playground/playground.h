@@ -48,14 +48,11 @@ void updateAnimationLoop(); //<<< updates the animation loop
 void parseStl(std::vector< glm::vec3 >& vertices, std::vector< glm::vec3 >& normals, std::string stl_file_name);
 bool initializeWindow(); //<<< initializes the window using GLFW and GLEW
 bool createVPTransformation();
-bool initializeVertexbuffer(); //<<< initializes the vertex buffer array and binds it OpenGL
-bool initializeColorbuffer(); //<<< initializes the vertex buffer array and binds it OpenGL
 
 bool cleanupVertexbuffer(); //<<< frees all recources from the vertex buffer
 bool cleanupColorbuffer(); //<<< frees all recources from the vertex buffer
 bool closeWindow(); //<<< Closes the OpenGL window and terminates GLFW
 
-void textureTest();
 void switchCamera(float time);
 void switchScenes(float time);
 

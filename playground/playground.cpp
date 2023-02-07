@@ -79,7 +79,7 @@ int main(void)
     //start animation loop until escape key is pressed
     do {
 
-        updateAnimationLoop();
+        updateAnimationLoop(); 
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
@@ -244,129 +244,6 @@ bool initializeWindow()
     return true;
 }
 
-void textureTest() {
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
-
-    vertexbuffer_size = 6;
-
-    glm::vec2 triangleVertice1 = glm::vec2(0.0f, 0.0f);
-    glm::vec2 triangleVertice2 = glm::vec2(0.0f, 1.0f);
-    glm::vec2 triangleVertice3 = glm::vec2(1.0f, 1.0f);
-
-    glm::vec2 secTriangleVertice1 = glm::vec2(0.0f, 0.0f);
-    glm::vec2 secTriangleVertice2 = glm::vec2(1.0f, 1.0f);
-    glm::vec2 secTriangleVertice3 = glm::vec2(1.0f, 0.0f);
-
-    static GLfloat g_vertex_buffer_data[18];
-    g_vertex_buffer_data[0] = triangleVertice1[0];
-    g_vertex_buffer_data[1] = triangleVertice1[1];
-    g_vertex_buffer_data[2] = 0.0f;
-    g_vertex_buffer_data[3] = triangleVertice2[0];
-    g_vertex_buffer_data[4] = triangleVertice2[1];
-    g_vertex_buffer_data[5] = 0.0f;
-    g_vertex_buffer_data[6] = triangleVertice3[0];
-    g_vertex_buffer_data[7] = triangleVertice3[1];
-    g_vertex_buffer_data[8] = 0.0f;
-    g_vertex_buffer_data[9] = secTriangleVertice1[0];
-    g_vertex_buffer_data[10] = secTriangleVertice1[1];
-    g_vertex_buffer_data[11] = 0.0f;
-    g_vertex_buffer_data[12] = secTriangleVertice2[0];
-    g_vertex_buffer_data[13] = secTriangleVertice2[1];
-    g_vertex_buffer_data[14] = 0.0f;
-    g_vertex_buffer_data[15] = secTriangleVertice3[0];
-    g_vertex_buffer_data[16] = secTriangleVertice3[1];
-    g_vertex_buffer_data[17] = 0.0f;
-
-    glGenBuffers(1, &vertexBuffer1D);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer1D);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-
-    textureSampler2D = glGetUniformLocation(programID, "myTextureSampler");
-
-    static const GLfloat g_uv_buffer_date[] = {
-        0.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        0.0f, 0.0f,
-        1.0f, 1.0f,
-        1.0f, 0.0f
-    };
-
-    glGenBuffers(1, &uvbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_date), g_uv_buffer_date, GL_STATIC_DRAW);
-
-    static const GLubyte checkerboard_tex[] = {
-       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
-       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
-       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF,
-       0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00,
-       0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF
-    };
-
-    glGenTextures(1, &texID);
-    glBindTexture(GL_TEXTURE_2D, texID);
-    glTextureStorage2D(texID, 4, GL_R8, 8, 8);
-    glTextureSubImage2D(texID,
-        0,
-        0, 0,
-        8, 8,
-        GL_RED,
-        GL_UNSIGNED_BYTE,
-        checkerboard_tex
-    );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-}
-
-/*bool initializeMVPTransformation()
-{
-    // Get a handle for our "MVP" uniform
-    GLuint MatrixIDnew = glGetUniformLocation(programID, "MVP");
-    //MatrixID = MatrixIDnew;
-
-  //  MatrixIDM = glGetUniformLocation(programID, "M");
-
-	timeID = glGetUniformLocation(programID, "time");
-
-
-    // Projection matrix : 45� Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 500.0f);
-    //glm::mat4 Projection = glm::frustum(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f, 2.0f);
-    // Camera matrix
-    glm::mat4 View = glm::lookAt(
-        glm::vec3(50, 50, 0), // Camera is at (4,3,-3), in World Space
-        glm::vec3(0, 0, 0), // and looks at the origin
-        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-        
-    );
-    // Model matrix : an identity matrix (model will be at the origin)
-    glm::mat4 Model = glm::mat4(1.0f);
-
-    Model = glm::rotate(Model, curr_angle, glm::vec3(0.0f, 1.0f, 1.0f));
-
-    float ratio = width / height;
-
-    glm::mat4 transformation;//additional transformation for the model
-    transformation[0][0] = ratio * 1; transformation[1][0] = 0.0; transformation[2][0] = 0.0; transformation[3][0] = curr_x;
-    transformation[0][1] = 0.0; transformation[1][1] = 1.0; transformation[2][1] = 0.0; transformation[3][1] = curr_y;
-    transformation[0][2] = 0.0; transformation[1][2] = 0.0; transformation[2][2] = 1.0; transformation[3][2] = curr_z;
-    transformation[0][3] = 0.0; transformation[1][3] = 0.0; transformation[2][3] = 0.0; transformation[3][3] = 1.0;
-
-    // Our ModelViewProjection : multiplication of our 3 matrices
-   // MVP = Projection * View * transformation * Model; // Remember, matrix multiplication is the other way around
-	//M =  View * transformation * Model;
-
-    return true;
-
-}*/
-
 bool createVPTransformation() {
     
     GLuint viewIDNew = glGetUniformLocation(programID, "view");
@@ -399,40 +276,6 @@ bool createVPTransformation() {
 
     return true;
 }
-
-bool initializeVertexbuffer()
-{
-    glGenVertexArrays(1, &VertexArrayID);
-    glBindVertexArray(VertexArrayID);
-
-    //create vertex and normal data
-    std::vector< glm::vec3 > vertices = std::vector< glm::vec3 >();
-    std::vector< glm::vec3 > normals = std::vector< glm::vec3 >();
-    parseStl(vertices, normals, "../stlFiles/Utah_teapot.stl");
-    vertexbuffer_size = vertices.size() * sizeof(glm::vec3);
-
-    // print normals to console
-
-    glGenBuffers(2, vertexbuffer); //generate two buffers, one for the vertices, one for the normals
-
-    //fill first buffer (vertices)
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[0]);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    //fill second buffer (normals)
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[1]);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    return true;
-
-}
-
-
-
 
 bool cleanupVertexbuffer()
 {

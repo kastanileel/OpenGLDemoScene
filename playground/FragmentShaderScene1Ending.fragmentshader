@@ -30,18 +30,8 @@ void main()
           }
         return;
     }
-
-    float oversizeFactor = 10000.0 - erg;
-    float blur = 0.0;
-    if(oversizeFactor > 0.0){
-         blur = oversizeFactor/10000.0;
-         blur = 1.0 - blur;
-         fragColor = vec4(blur*fColor,1.0);
-    }
-    else {
-        fragColor = vec4(0,0,0,1.0);
-    }
-	
+   
+   fragColor = vec4(0,0,0,1.0);
 
    //fade fragColor to black if shaderstate is larger than 44
    if(shaderState > 48){

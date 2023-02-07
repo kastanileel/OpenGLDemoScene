@@ -13,7 +13,7 @@
   - Scene 2 can be interpreted as a transition to scene 3
   - Scene 3 shows a shader that looks lika an endlessly rotating hole
 ***
-Here is a **480p recording** of the demo. **Please try to build it first because it looks much better.**
+Here is a **480p recording** of the demo. 
 
 https://user-images.githubusercontent.com/56845913/212196840-6e8bfe36-73c7-4a64-9203-c49e74fcc1fb.mp4
 ***
